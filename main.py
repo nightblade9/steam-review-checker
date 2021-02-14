@@ -42,7 +42,13 @@ class Main:
                 review_number = 1
             else:
                 review_number += 1
-            print("[Review #{}]: {}\n--------------------".format(review_number, review["review"]))
+            
+            # Pretty-print, e.g. 3 days ago
+            review_date = review["timestamp_created"]
+            elapsed_seconds = time.time() - review_date
+            days_ago = round(elapsed_seconds / (60 * 60 * 24))
+
+            print("[Review #{} ({} days ago)]: {}\n--------------------".format(review_number, days_ago, review["review"]))
 
         self._write_current_time()
 
