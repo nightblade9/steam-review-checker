@@ -8,7 +8,9 @@ class Main:
     _CONFIG_JSON_FILENAME = "config.json"
     _LAST_SEEN_FILE = "last_seen_timestamp.txt"
     _STEAM_APP_URL = "https://store.steampowered.com/app/" # append app_id
-    _STEAM_BASE_URL = "https://store.steampowered.com/appreviews/{}?json=1"
+
+    # Sort by newest-first, up to the max (100 per page). See: https://partner.steamgames.com/doc/store/getreviews
+    _STEAM_BASE_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&num_per_page=100"
     
 
     def main(self):
@@ -37,7 +39,10 @@ class Main:
             if review["app_id"] != previous_app_id:
                 print("================ For app #{}: {}/{} ================".format(app_id, Main._STEAM_APP_URL, app_id))
                 previous_app_id = review["app_id"]
-            print("[Review #{}]: {}\n--------------------".format(i + 1, review["review"]))
+                review_number = 1
+            else:
+                review_number += 1
+            print("[Review #{}]: {}\n--------------------".format(review_number, review["review"]))
 
         self._write_current_time()
 
