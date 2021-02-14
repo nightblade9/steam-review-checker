@@ -19,6 +19,7 @@ class Main:
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
         last_timestamp = self._get_last_review_time()
+        self._write_current_time()
 
         for app_id in app_ids:
             reviews = self._get_app_reviews(app_id)
@@ -28,10 +29,16 @@ class Main:
                     review["app_id"] = app_id
 
         if len(new_reviews) == 0:
-            print("No new reviews, sorry.")
+            elapsed_seconds = time.time() - last_timestamp
+            last_checked_days = round(elapsed_seconds / (60 * 60 * 24))
+            if last_checked_days == 0:
+                last_checked_days = "today"
+            else:
+                last_checked_days = "{} days ago".format(last_checked_days)
+            print("Last checked {}. No new reviews, sorry.".format(last_checked_days))
             return
         
-        print("***** {} new reviews! ****".format(len(new_reviews)))
+        print("***** {} new review(s)! ****".format(len(new_reviews)))
         previous_app_id = 0
 
         for i in range(len(new_reviews)):
@@ -50,8 +57,6 @@ class Main:
 
             print("[Review #{} ({} days ago)]: {}\n--------------------".format(review_number, days_ago, review["review"]))
 
-        self._write_current_time()
-
     def _read_config_json(self):
         config_json = ""
         with open(Main._CONFIG_JSON_FILENAME) as file_handle:
@@ -65,7 +70,6 @@ class Main:
         if os.path.isfile(Main._LAST_SEEN_FILE):
             with open(Main._LAST_SEEN_FILE, 'r') as file_handle:
                 last_timestamp = float(file_handle.read())
-                print("Read last timestamp {}".format(last_timestamp))
 
         return last_timestamp
 
