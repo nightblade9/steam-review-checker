@@ -42,16 +42,20 @@ class DiscussionFetcher(SteamFetcher):
                 author = title_and_author[-1].strip()
 
                 raw_date = dissected_nodes[2].strip()
-                discussion_date = datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p').strftime("%Y-%m-%d %H:%M")
-                print(discussion_date)
+                discussion_date = datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p')
+                days_ago = (datetime.datetime.now() - discussion_date).days
+                date_formatted = discussion_date.strftime("%Y-%m-%d %H:%M")
 
                 all_discussions.append({
                     "title": title,
-                    "date": discussion_date,
+                    "date": date_formatted,
                     "author": author,
                     "url": discussion_url,
                     "num_replies": num_replies,
+                    "days_ago": days_ago
                 })
 
             # Sort by time descending, order of games isn't important
             all_discussions.sort(key=lambda x: x["date"], reverse=True)
+
+            return all_discussions

@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  background-color: white;
 }
 
 .App-logo {
@@ -35,4 +36,23 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+body {
+  background-color: #ddd;
+}
+
+.reviewText {
+  margin: 12px;
+}
+
+.Positive { color: blue; }
+.Negative { color: red; }
+
+#reviews, #discussions {
+  background-color: white;
+  width: 612px;
+  float: left;
+  padding: 10px;
+  border: 10px solid #eee;
 }

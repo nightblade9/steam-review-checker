@@ -1,3 +1,4 @@
+from fetchers.discussion_fetcher import DiscussionFetcher
 from fetchers.review_fetcher import ReviewFetcher
 import json
 import os
@@ -25,12 +26,19 @@ class Main:
         subprocess.run(["npm", "run", "build"], cwd="web", shell=True)
 
     def _fetch_all_data(self):
-        fetcher = ReviewFetcher()
-        all_reviews = fetcher.get_reviews()
+        review_fetcher = ReviewFetcher()
+        all_reviews = review_fetcher.get_reviews()
         all_reviews_json = json.dumps(all_reviews)
 
         with open(os.path.join("web", "build", "data", "reviews.json"), "w") as file_handle:
             file_handle.write(all_reviews_json)
+
+        discussion_fetcher = DiscussionFetcher()
+        all_discussions = discussion_fetcher.get_discussions()
+        all_discussions_json = json.dumps(all_discussions)
+
+        with open(os.path.join("web", "build", "data", "discussions.json"), "w") as file_handle:
+            file_handle.write(all_discussions_json)
     
     def _ensure_output_directory_exists(self):
         if not os.path.isdir(os.path.join("web", "build")):
