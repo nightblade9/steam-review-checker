@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Review from './Review'
 
 export const Dashboard = () =>
 {
@@ -17,7 +18,7 @@ export const Dashboard = () =>
             });
         }
 
-        if (reviews.length == 0)
+        if (reviews.length === 0)
         {
             fetchData();
         }
@@ -28,12 +29,7 @@ export const Dashboard = () =>
             <p>{reviews.length} reviews:</p>
                 {reviews.map(review =>
                     // TODO: move into review child component
-                    <div key={review.recommendationId}>
-                        <p>Reviewed <strong>{review.days_ago}</strong> days ago:</p>
-                        <p>{review.review}</p>
-                    <hr />
-
-                    </div>
+                    <Review data={review} />
                 )}
         </div>
     )
