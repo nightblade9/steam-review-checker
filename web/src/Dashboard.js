@@ -26,7 +26,7 @@ export const Dashboard = () =>
 
     return (
         <div id="dashboard">
-            <p>{reviews.length} reviews:</p>
+            <h1>{reviews.length} reviews</h1>
                 {reviews.map(review =>
                     // TODO: move into review child component
                     <Review data={review} />
