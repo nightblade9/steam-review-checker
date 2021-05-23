@@ -3,9 +3,10 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 SERVER_HOSTNAME = "localhost"
 SERVER_PORT = 8080
+contents = ""
 
 class WebServer(BaseHTTPRequestHandler):
-    def do_GET(self, contents = ""):
+    def do_GET(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()

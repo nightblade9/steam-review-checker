@@ -12,11 +12,10 @@ class DataFetcher:
     # Sort by newest-first, up to the max (100 per page). See: https://partner.steamgames.com/doc/store/getreviews
     _STEAM_BASE_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&num_per_page=100"
     
-
     def get_reviews(self):
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
-        reviews = []
+        all_reviews = []
 
         for app_id in app_ids:
             reviews = self._get_steam_reviews(app_id)
@@ -27,6 +26,9 @@ class DataFetcher:
                 elapsed_seconds = time.time() - review["timestamp_created"]
                 days_ago = round(elapsed_seconds / (60 * 60 * 24))
                 review["days_ago"] = days_ago
+                all_reviews.append(review)
+        
+        return all_reviews
 
     def _read_config_json(self):
         config_json = ""
