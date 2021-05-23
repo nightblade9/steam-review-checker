@@ -1,16 +1,10 @@
 #!/bin/python3
 import json
-import urllib.request
+from fetchers.steam_fetcher import SteamFetcher
 import time
+import urllib.request
 
-class DataFetcher:
-    _CONFIG_JSON_FILENAME = "config.json"
-
-    # Used to get the app title
-    _STEAM_APP_URL = "https://store.steampowered.com/app/{}" # append app_id
-
-    # Sort by newest-first, up to the max (100 per page). See: https://partner.steamgames.com/doc/store/getreviews
-    _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&num_per_page=100"
+class ReviewFetcher(SteamFetcher):
     
     def get_reviews(self):
         config_json = self._read_config_json()
@@ -37,26 +31,10 @@ class DataFetcher:
         all_reviews.sort(key=lambda x: x["timestamp_created"], reverse=True)
 
         return all_reviews
-
-    def _read_config_json(self):
-        config_json = ""
-        with open(DataFetcher._CONFIG_JSON_FILENAME) as file_handle:
-            config_json = file_handle.read()
-        config = json.loads(config_json)
-        return config
-    
-    def _get_steam_game_title(self, app_id):
-        url = DataFetcher._STEAM_APP_URL.format(app_id)
-        response = urllib.request.urlopen(url).read()
-        text = response.decode('utf-8')
-        start_position = text.index("<title>") + len("<title>")
-        stop_position = text.index("on Steam", start_position) - 1
-        title = text[start_position:stop_position]
-        return title
     
     def _get_steam_reviews(self, app_id):
         # Call the API for each app and get reviews
-        url = DataFetcher._STEAM_REVIEWS_URL.format(app_id)
+        url = SteamFetcher._STEAM_REVIEWS_URL.format(app_id)
         response = urllib.request.urlopen(url).read()
         json_response = json.loads(response.decode('utf-8'))
 

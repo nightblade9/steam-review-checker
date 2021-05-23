@@ -1,4 +1,4 @@
-from data_fetcher import DataFetcher
+from fetchers.review_fetcher import ReviewFetcher
 import json
 import os
 import shutil
@@ -25,7 +25,7 @@ class Main:
         subprocess.run(["npm", "run", "build"], cwd="web", shell=True)
 
     def _fetch_all_data(self):
-        fetcher = DataFetcher()
+        fetcher = ReviewFetcher()
         all_reviews = fetcher.get_reviews()
         all_reviews_json = json.dumps(all_reviews)
 
