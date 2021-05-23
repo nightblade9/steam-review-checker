@@ -50,7 +50,7 @@ class DataFetcher:
         response = urllib.request.urlopen(url).read()
         text = response.decode('utf-8')
         start_position = text.index("<title>") + len("<title>")
-        stop_position = text.index("</title>", start_position)
+        stop_position = text.index("on Steam", start_position) - 1
         title = text[start_position:stop_position]
         return title
     
