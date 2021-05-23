@@ -7,6 +7,8 @@ class SteamFetcher:
 
     # Used to get the app title
     _STEAM_APP_URL = "https://store.steampowered.com/app/{}" # append app_id
+    # Used to scrape discussions
+    _STEAM_COMMUNITY_URL = "https://steamcommunity.com/app/{}"
 
     # Sort by newest-first, up to the max (100 per page). See: https://partner.steamgames.com/doc/store/getreviews
     _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&num_per_page=100"
