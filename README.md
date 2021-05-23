@@ -1,13 +1,29 @@
 # Steam Review Checker
 
-Little script that pokes Steam for reviews/discussions.
+Little web application that grabs data from public APIs and displays them nicely in a dashboard for you.
 
-Open up `config.json` and fill in all the values. You can find the steam app ID from browsing the page for your game; the ID is the last numeric value, e.g. for Oneons (`https://store.steampowered.com/app/1342600/Oneons_Prisoners/`) the app ID is 1342600.
+# Setup
 
-Sample:
+You'll need Python 3 and NodeJS.
 
+- Open up `config.json` and put your Steam app IDs in it.
+- Run `npm i` from the `web` directory to fetch all npm packages
+- Run `npm build` and make sure it builds fine
+
+Run `python main.py` to run the web application. It builds, runs, and starts the web-server.
+
+Sample `config.json`:
 ```json
 {
-    "appIds": [ 1342600 ]
+    "appIds": [ 667510, 1342600 ]
 }
 ```
+
+# Development Environment
+
+For local development:
+
+- Make sure you've run `python main.py` at least once
+- Copy the `web/build/data` directory to `web/public`
+- Run `npm start` from `web`
+

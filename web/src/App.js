@@ -2,6 +2,16 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+
+  fetch("data/reviews.json", {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+  .then(data => {
+    console.log(data)
+  })
+
   return (
     <div className="App">
       <header className="App-header">
