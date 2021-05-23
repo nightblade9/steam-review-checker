@@ -1,7 +1,6 @@
 #!/bin/python3
-from os import link
+import datetime
 from fetchers.steam_fetcher import SteamFetcher
-import re
 import urllib
 import lxml.html
 
@@ -30,16 +29,22 @@ class DiscussionFetcher(SteamFetcher):
 
             for i in range(len(discussion_nodes)):
                 node = discussion_nodes[i]
+
                 link_node = [a for a in node if a.tag == 'a'][0]
                 discussion_url = link_node.attrib["href"]
 
                 dissected_nodes = node.text_content().strip().split('\t\t\t\t')
                 # Dissected nodes is eight items, including some empty ones.
                 num_replies = dissected_nodes[0].strip()
-                discussion_date = dissected_nodes[2].strip()
+
                 title_and_author = dissected_nodes[7].split('\n')
                 title = title_and_author[0].strip()
                 author = title_and_author[-1].strip()
+
+                raw_date = dissected_nodes[2].strip()
+                discussion_date = datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p').strftime("%Y-%m-%d %H:%M")
+                print(discussion_date)
+
                 all_discussions.append({
                     "title": title,
                     "date": discussion_date,
@@ -47,3 +52,6 @@ class DiscussionFetcher(SteamFetcher):
                     "url": discussion_url,
                     "num_replies": num_replies,
                 })
+
+            # Sort by time descending, order of games isn't important
+            all_discussions.sort(key=lambda x: x["date"], reverse=True)
