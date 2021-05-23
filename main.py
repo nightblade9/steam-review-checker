@@ -1,28 +1,18 @@
 from data_fetcher import DataFetcher
+import json
 import os
 import subprocess
-from threading import Thread
 
 class Main:
     def main(self):
-        # Required for parallel execution
+        # Start web server.  This nukes build/data, so we have to wait for it to finish.
+        self._build_web_app()
+
         self._ensure_output_directory_exists()
-
-        # Start building/running web server
-        web_thread = Thread(target = self._build_web_app)
-        web_thread.start()
-
-        # Grab all the necessary data from API calls and dump them to files
-        data_thread = Thread(target = self._fetch_all_data)
-        data_thread.start()
-
-        # Wait for everything to be done
-        web_thread.join()
-        data_thread.join()
+        self._fetch_all_data()
 
         # Start web server
         subprocess.Popen(["python", "-m", "http.server"], cwd=os.path.join("web", "build"), shell=True)
-
 
     def _build_web_app(self):
         # Build the self-hostable version of the app
@@ -31,7 +21,10 @@ class Main:
     def _fetch_all_data(self):
         fetcher = DataFetcher()
         all_reviews = fetcher.get_reviews()
-        return {"reviews": all_reviews}
+        all_reviews_json = json.dumps(all_reviews)
+
+        with open(os.path.join("web", "build", "data", "reviews.json"), "w") as file_handle:
+            file_handle.write(all_reviews_json)
     
     def _ensure_output_directory_exists(self):
         if not os.path.isdir(os.path.join("web", "build")):
