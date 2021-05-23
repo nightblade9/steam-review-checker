@@ -28,6 +28,9 @@ class DataFetcher:
                 review["days_ago"] = days_ago
                 all_reviews.append(review)
         
+        # Sort by time descending, order of games isn't important
+        all_reviews.sort(key=lambda x: x["timestamp_created"], reverse=True)
+
         return all_reviews
 
     def _read_config_json(self):

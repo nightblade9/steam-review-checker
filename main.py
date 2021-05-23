@@ -1,6 +1,7 @@
 from data_fetcher import DataFetcher
 import json
 import os
+import shutil
 import subprocess
 
 class Main:
@@ -10,6 +11,11 @@ class Main:
 
         self._ensure_output_directory_exists()
         self._fetch_all_data()
+
+        # Copy data to public/data. Makes local development easier
+        if os.path.exists(os.path.join("web", "public", "data")):
+            shutil.rmtree(os.path.join("web", "public", "data"))
+        shutil.copytree(os.path.join("web", "build", "data"), os.path.join("web", "public", "data"))
 
         # Start web server
         subprocess.Popen(["python", "-m", "http.server"], cwd=os.path.join("web", "build"), shell=True)

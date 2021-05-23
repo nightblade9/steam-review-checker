@@ -24,6 +24,5 @@ Sample `config.json`:
 For local development:
 
 - Make sure you've run `python main.py` at least once
-- Copy the `web/build/data` directory to `web/public`
 - Run `npm start` from `web`
 
