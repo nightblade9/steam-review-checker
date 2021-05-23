@@ -42,7 +42,12 @@ class DiscussionFetcher(SteamFetcher):
                 author = title_and_author[-1].strip()
 
                 raw_date = dissected_nodes[2].strip()
+
+                # Older discussions have a year, this year's discussions don't have a year
+                if not ',' in raw_date:
+                    raw_date = raw_date.replace(" @ ", ", {} @ ".format(datetime.datetime.now().year))
                 discussion_date = datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p')
+
                 days_ago = (datetime.datetime.now() - discussion_date).days
                 date_formatted = discussion_date.strftime("%Y-%m-%d %H:%M")
 
@@ -55,7 +60,7 @@ class DiscussionFetcher(SteamFetcher):
                     "days_ago": days_ago
                 })
 
-            # Sort by time descending, order of games isn't important
-            all_discussions.sort(key=lambda x: x["date"], reverse=True)
+        # Sort by time descending, order of games isn't important
+        all_discussions.sort(key=lambda x: x["date"], reverse=True)
 
-            return all_discussions
+        return all_discussions
