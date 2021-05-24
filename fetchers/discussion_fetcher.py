@@ -19,6 +19,7 @@ class DiscussionFetcher(SteamFetcher):
             url = DiscussionFetcher._STEAM_DISCUSSIONS_URL.format(app_id)
             response = urllib.request.urlopen(url).read()
             raw_html = response.decode('utf-8')
+            game_name = self._get_steam_game_title(app_id)
 
             # Repair HTML so we can use XPath
             raw_html = raw_html.replace('class="searchtext"', '')
@@ -52,12 +53,13 @@ class DiscussionFetcher(SteamFetcher):
                 date_formatted = discussion_date.strftime("%Y-%m-%d %H:%M")
 
                 all_discussions.append({
-                    "title": title,
+                    "title": title, # discussion title, not game name
                     "date": date_formatted,
                     "author": author,
                     "url": discussion_url,
                     "num_replies": num_replies,
-                    "days_ago": days_ago
+                    "days_ago": days_ago,
+                    "game_name": game_name
                 })
 
         # Sort by time descending, order of games isn't important
