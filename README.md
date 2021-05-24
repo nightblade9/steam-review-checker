@@ -12,20 +12,30 @@ Currently, Steam Review Checker shows reviews and discussions for your specified
 
 # Setup
 
-You'll need Python 3 and NodeJS.
+You'll need Python 3 and NodeJS
+- Running `python` and `node` from the terminal should work.
+- If you're using `py.exe` instead, you'll need to update `main.py` to specify that command instead.
 
-- Open up `config.json` and put your Steam app IDs in it.
-- Run `npm i` from the `web` directory to fetch all npm packages
-- Run `npm build` and make sure it builds fine
+First, create a new `config.json` file in the repository root directory, and put your Steam app IDs in it:
 
-Run `python main.py` to run the web application. It builds, runs, and starts the web-server.
-
-Sample `config.json`:
 ```json
 {
     "appIds": [ 667510, 1342600 ]
 }
 ```
+
+Build the web application:
+
+- Open a terminal and browse to the `web` directory
+- Run `npm i` to fetch all npm packages
+- Run `npm run build` and make sure it builds fine
+
+Build the Python application:
+
+- Run `pip install -r requirements.txt` to install necessary pip packages
+- Run `python main.py` to run the web application.
+
+It builds, runs, fetches game data, and starts the web-server. You can open a browser to `localhost:8000` to see the dashboard.
 
 # Development Environment
 
