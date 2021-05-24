@@ -1,6 +1,14 @@
 # Steam Review Checker
 
-Little web application that grabs data from public APIs and displays them nicely in a dashboard for you.
+![](https://i.imgur.com/qElKnFu.png)
+
+- Do you find it tedious to check Steam reviews daily to see if there's something new?
+- Do you often forget to subscribe to your own games' discussion forums on Steam?
+- Isn't it painful to check Steam pages for multiple games?
+
+Well, I felt the same way. I created Steam Review Checker with one goal: create a single place I can check daily, and see the latest stuff across all my games.
+
+Currently, Steam Review Checker shows reviews and discussions for your specified games, newest-first. Feel free to suggest more features or open a PR with changes.
 
 # Setup
 
