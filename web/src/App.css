@@ -51,8 +51,15 @@ body {
 
 #reviews, #discussions {
   background-color: white;
-  width: 612px;
   float: left;
   padding: 10px;
   border: 10px solid #eee;
+}
+
+#reviews {
+  width: 612px;
+}
+
+#discussions {
+  width: 700px;
 }
