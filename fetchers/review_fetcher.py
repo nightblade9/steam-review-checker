@@ -5,6 +5,9 @@ import time
 import urllib.request
 
 class ReviewFetcher(SteamFetcher):
+
+    # Sort by newest-first, up to the max (100 per page). See: https://partner.steamgames.com/doc/store/getreviews
+    _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&purchase_type=all&num_per_page=100"
     
     def get_reviews(self):
         config_json = self._read_config_json()
@@ -34,7 +37,7 @@ class ReviewFetcher(SteamFetcher):
     
     def _get_steam_reviews(self, app_id):
         # Call the API for each app and get reviews
-        url = SteamFetcher._STEAM_REVIEWS_URL.format(app_id)
+        url = ReviewFetcher._STEAM_REVIEWS_URL.format(app_id)
         response = urllib.request.urlopen(url).read()
         json_response = json.loads(response.decode('utf-8'))
 
