@@ -6,6 +6,7 @@ export const Dashboard = () =>
 {
     const [reviews, setReviews] = useState([]);
     const [discussions, setDiscussions] = useState([]);
+    const [metadata, setMetadata] = useState({})
 
     useEffect(() => {
         // Reviews
@@ -38,11 +39,24 @@ export const Dashboard = () =>
             .then(response => response.json())
             .then(data => {
                 setDiscussions(data);
+                // Do it synchronously so it renders without crashing
+                fetchMetadata();
+            });
+        }
+
+        const fetchMetadata = async () => {
+            fetch("data/metadata.json", {
+                "headers": {
+                    "Content-Type": "application/json"
+                }})
+            .then(response => response.json())
+            .then(data => {
+                setMetadata(data);
             });
         }
     });
 
-    if (reviews == null || discussions == null)
+    if (reviews == null || discussions == null || metadata == null)
     {
         return "" // not ready yet
     }
@@ -50,11 +64,21 @@ export const Dashboard = () =>
     return (
         
         <div id="dashboard">
+            <p>Looking at data for {Object.keys(metadata).length} games:
+            {
+                Object.keys(metadata).map((app_id) => ( 
+                    <span key={app_id}>&nbsp;
+                        <strong>{ metadata[app_id].game_name }</strong>
+                    </span>
+                ))
+            }
+            </p>
+            
             <div id="reviews">
                 <h1>{reviews.length} reviews</h1>
                     {
                         reviews.map(review =>
-                        <Review data={review} />
+                        <Review key={review.recommendationid} data={review} />
                     )}
             </div>
             
@@ -64,7 +88,7 @@ export const Dashboard = () =>
                 <ul>
                     {
                         discussions.map(discussion =>
-                        <Discussion data={discussion} />
+                        <Discussion  key={discussion.date} data={discussion} />
                     )}
                 </ul>
             </div>

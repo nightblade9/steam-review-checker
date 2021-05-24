@@ -39,8 +39,7 @@ It builds, runs, fetches game data, and starts the web-server. You can open a br
 
 # Development Environment
 
-For local development:
+For local development setup, you can fetch data, and then just run the React app and iterate quickly on the UI:
 
-- Make sure you've run `python main.py` at least once
-- Run `npm start` from `web`
-
+- Make sure you've run `python main.py` at least once to fetch and write data to disk (see `web/build/data`)
+- `cd` into `web` and run `npm start`

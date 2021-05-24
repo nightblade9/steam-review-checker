@@ -1,4 +1,5 @@
 from fetchers.discussion_fetcher import DiscussionFetcher
+from fetchers.game_fetcher import GameFetcher
 from fetchers.review_fetcher import ReviewFetcher
 import json
 import os
@@ -26,17 +27,18 @@ class Main:
         subprocess.run(["npm", "run", "build"], cwd="web", shell=True)
 
     def _fetch_all_data(self):
-        review_fetcher = ReviewFetcher()
-        all_reviews = review_fetcher.get_reviews()
-        all_reviews_json = json.dumps(all_reviews)
+        metadata = GameFetcher().get_game_metadata() # metadata like titles
+        all_metadata_json = json.dumps(metadata)
+        with open(os.path.join("web", "build", "data", "metadata.json"), "w") as file_handle:
+            file_handle.write(all_metadata_json)
 
+        all_reviews = ReviewFetcher().get_reviews(metadata)
+        all_reviews_json = json.dumps(all_reviews)
         with open(os.path.join("web", "build", "data", "reviews.json"), "w") as file_handle:
             file_handle.write(all_reviews_json)
 
-        discussion_fetcher = DiscussionFetcher()
-        all_discussions = discussion_fetcher.get_discussions()
+        all_discussions = DiscussionFetcher().get_discussions(metadata)
         all_discussions_json = json.dumps(all_discussions)
-
         with open(os.path.join("web", "build", "data", "discussions.json"), "w") as file_handle:
             file_handle.write(all_discussions_json)
     

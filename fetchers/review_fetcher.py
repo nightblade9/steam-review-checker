@@ -9,13 +9,13 @@ class ReviewFetcher(SteamFetcher):
     # Sort by newest-first, up to the max (100 per page). See: https://partner.steamgames.com/doc/store/getreviews
     _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&purchase_type=all&num_per_page=100"
     
-    def get_reviews(self):
+    # Metadata is a dictionary of app_id => data
+    def get_reviews(self, metadata):
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
         all_reviews = []
 
         for app_id in app_ids:
-            title = self._get_steam_game_title(app_id)
             reviews = self._get_steam_reviews(app_id)
 
             # Amend import data ...
@@ -23,10 +23,10 @@ class ReviewFetcher(SteamFetcher):
             for review in reviews:
                 # Amend data
                 review["app_id"] = app_id
-                review["title"] = title
                 elapsed_seconds = time.time() - review["timestamp_created"]
                 days_ago = round(elapsed_seconds / (60 * 60 * 24))
                 review["days_ago"] = days_ago
+                review["game_name"] = metadata[app_id]["game_name"]
                 
                 all_reviews.append(review)
         

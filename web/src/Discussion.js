@@ -1,7 +1,7 @@
 const Discussion = (props) =>
 {
     return (
-        <li key={props.data}>
+        <li>
             (<strong>
                 {props.data.days_ago >= 365 ? Math.floor(props.data.days_ago / 365) + " years" : props.data.days_ago + " days"}
             </strong> ago) &nbsp;
