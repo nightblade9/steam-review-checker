@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 import subprocess
+import time
 
 class Main:
     def main(self):
@@ -27,6 +28,8 @@ class Main:
         subprocess.run(["npm", "run", "build"], cwd="web", shell=True)
 
     def _fetch_all_data(self):
+        start_time = time.time()
+
         metadata = GameFetcher().get_game_metadata() # metadata like titles
         all_metadata_json = json.dumps(metadata)
         with open(os.path.join("web", "build", "data", "metadata.json"), "w") as file_handle:
@@ -41,6 +44,10 @@ class Main:
         all_discussions_json = json.dumps(all_discussions)
         with open(os.path.join("web", "build", "data", "discussions.json"), "w") as file_handle:
             file_handle.write(all_discussions_json)
+
+        stop_time = time.time()
+        elapsed_time = stop_time - start_time
+        print("*** Fetched data in {0:g}s ***".format(elapsed_time))
     
     def _ensure_output_directory_exists(self):
         if not os.path.isdir(os.path.join("web", "build")):
