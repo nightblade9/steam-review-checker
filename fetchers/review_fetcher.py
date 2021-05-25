@@ -7,7 +7,9 @@ import urllib.request
 class ReviewFetcher(SteamFetcher):
 
     # Sort by newest-first, up to the max (100 per page). See: https://partner.steamgames.com/doc/store/getreviews
-    _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&purchase_type=all&num_per_page=100"
+    # language=all: ALL languages, not just English/default
+    # purchase_type=all: ALL reviews, paid (buyers) and non-paid (free key, etc.)
+    _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&purchase_type=all&language=all&num_per_page=100"
     
     # Metadata is a dictionary of app_id => data
     def get_reviews(self, metadata):
