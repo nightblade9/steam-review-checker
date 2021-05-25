@@ -43,11 +43,7 @@ class DiscussionFetcher(SteamFetcher):
                 author = title_and_author[-1].strip()
 
                 raw_date = dissected_nodes[2].strip()
-
-                # Older discussions have a year, this year's discussions don't have a year
-                if not ',' in raw_date:
-                    raw_date = raw_date.replace(" @ ", ", {} @ ".format(datetime.datetime.now().year))
-                discussion_date = datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p')
+                discussion_date = parse_date(raw_date)
 
                 days_ago = (datetime.datetime.now() - discussion_date).days
                 date_formatted = discussion_date.strftime("%Y-%m-%d %H:%M")
@@ -67,3 +63,21 @@ class DiscussionFetcher(SteamFetcher):
         all_discussions.sort(key=lambda x: x["date"], reverse=True)
 
         return all_discussions
+
+def parse_date(raw_date):
+    # Ah, Steam, ah. Discussion dates can have a variety of interesting, painful formats.
+    # 1) The most stable are dates older than a year: we get a full year, month, and day (e.g. April 29, 2019).
+    # 2) Reviews this year, have no year attached to them (e.g. May 20).
+    # 3) Really recent reviews can be, like, "8 minutes ago", 'Just now', etc.
+
+    if len(raw_date.strip()) == 0 or raw_date.upper() == 'JUST NOW':
+        return datetime.datetime.now()
+    if "minutes ago" in raw_date:
+        index = raw_date.index(' ') # the first space in "8 minutes ago"
+        minutes = int(raw_date[0:index])
+        return datetime.datetime.now() + datetime.timedelta(minutes=minutes)
+    # If there's no year, add one!
+    if not ',' in raw_date:
+        raw_date = raw_date.replace(" @ ", ", {} @ ".format(datetime.datetime.now().year))
+    
+    return datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p')
