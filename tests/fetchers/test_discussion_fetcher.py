@@ -3,7 +3,6 @@ import os
 import unittest
 
 from fetchers import discussion_fetcher
-from fetchers.discussion_fetcher import DiscussionFetcher
 
 class TestDicussionFetcher(unittest.TestCase):
 
@@ -62,16 +61,23 @@ class TestDicussionFetcher(unittest.TestCase):
         self.assertEqual(2, int(discussion["num_replies"]))
         self.assertEqual("Oneons", discussion["game_name"])
     
-    # For other games: review count is sufficient. This covers: non-English reviews, free-key-redeemed reviews, etc.
+    # For other games: discussion count is sufficient.
     def test_parse_discussions_can_parse_up_to_15_discussions(self):
         test_cases = [
             {
+                # Clam Man
                 "app_id": 1000640,
                 "expected": 11
             },
             {
+                # Pixelot
                 "app_id": 1512860,
                 "expected": 12
+            },
+            {
+                # Cursed: Gems 2
+                "app_id": 643960,
+                "expected": 15 # max
             }
         ]
 
