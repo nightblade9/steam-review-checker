@@ -1,6 +1,5 @@
 #!/bin/python3
 import json
-import urllib.request
 
 class SteamFetcher:
     _CONFIG_JSON_FILENAME = "config.json"
