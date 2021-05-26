@@ -9,22 +9,42 @@ class TestDicussionFetcher(unittest.TestCase):
     def test_parse_date_converts_empty_string_to_now(self):
         for test_case in ['', '          ']:
             actual = discussion_fetcher._parse_date(test_case)
-            self.assertAlmostEqual(actual, datetime.datetime.now(), datetime.timedelta(seconds=1))
+            now = datetime.datetime.now()
+            self.assertEqual(actual.year, now.year)
+            self.assertEqual(actual.month, now.month)
+            self.assertEqual(actual.day, now.day)
+            self.assertEqual(actual.hour, now.hour)
+            self.assertEqual(actual.min, now.min)
     
     def test_parse_date_converts_just_now_to_now(self):
         for test_case in ["just NOW", "Just now", "JuSt NoW"]:
             actual = discussion_fetcher._parse_date(test_case)
-            self.assertAlmostEqual(actual, datetime.datetime.now(), datetime.timedelta(seconds=1))
+            now = datetime.datetime.now()
+            self.assertEqual(actual.year, now.year)
+            self.assertEqual(actual.month, now.month)
+            self.assertEqual(actual.day, now.day)
+            self.assertEqual(actual.hour, now.hour)
+            self.assertEqual(actual.min, now.min)
 
     def test_parse_date_converts_minutes_ago_to_now_with_delta(self):
         for test_case in [8, 38, 1, 59]:
             actual = discussion_fetcher._parse_date("{} minutes ago".format(test_case))
-            self.assertAlmostEqual(actual, datetime.datetime.now() + datetime.timedelta(minutes=test_case), datetime.timedelta(seconds=1))
+            now = datetime.datetime.now()
+            self.assertEqual(actual.year, now.year)
+            self.assertEqual(actual.month, now.month)
+            self.assertEqual(actual.day, now.day)
+            self.assertTrue(actual.hour == now.hour or actual.hour == now.hour + 1)
+            self.assertEqual(actual.min, now.min)
     
     def test_parse_date_converts_hours_ago_to_now_with_delta(self):
         for test_case in [17, 6, 1, 23]:
             actual = discussion_fetcher._parse_date("{} hours ago".format(test_case))
-            self.assertAlmostEqual(actual, datetime.datetime.now() + datetime.timedelta(hours=test_case), datetime.timedelta(seconds=1))
+            now = datetime.datetime.now()
+            self.assertEqual(actual.year, now.year)
+            self.assertEqual(actual.month, now.month)
+            self.assertTrue(actual.day == now.day or actual.day == now.day + 1)
+            # Hour is too tricky to assert with rollover
+            self.assertEqual(actual.min, now.min)
 
     def test_parse_date_converts_yearless_dates_to_current_year(self):
         for data in ["29 May", "1 Jan", "31 Dec", "28 Feb", "17 Aug"]:
