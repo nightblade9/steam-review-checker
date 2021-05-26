@@ -1,6 +1,6 @@
 # Steam Review Checker
 
-![](https://i.imgur.com/qElKnFu.png)
+![screenshot of dashboard](https://i.imgur.com/Lh9P8gI.png)
 
 - Do you find it tedious to check Steam reviews daily to see if there's something new?
 - Do you often forget to subscribe to your own games' discussion forums on Steam?

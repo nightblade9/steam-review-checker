@@ -68,7 +68,7 @@ export const Dashboard = () =>
             {
                 Object.keys(metadata).map((app_id) => ( 
                     <span key={app_id}>&nbsp;
-                        <strong>{ metadata[app_id].game_name }</strong>
+                        <strong>{ metadata[app_id].game_name }</strong>,
                     </span>
                 ))
             }
