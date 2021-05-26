@@ -81,7 +81,7 @@ def _parse_date(raw_date):
 
     if len(raw_date.strip()) == 0 or raw_date.upper() == 'JUST NOW':
         return datetime.datetime.now()
-    elif "minutes ago" in raw_date or "hour ago" or "hours ago" in raw_date:
+    elif "minutes ago" in raw_date or "hour ago" in raw_date or "hours ago" in raw_date:
         index = raw_date.index(' ') # the first space in "8 minutes ago"
         delta = int(raw_date[0:index])
         delta = datetime.timedelta(minutes=delta) if "minutes" in raw_date else datetime.timedelta(hours=delta)

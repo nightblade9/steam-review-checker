@@ -27,17 +27,19 @@ class TestDicussionFetcher(unittest.TestCase):
             self.assertAlmostEqual(actual, datetime.datetime.now() + datetime.timedelta(hours=test_case), datetime.timedelta(seconds=1))
 
     def test_parse_date_converts_yearless_dates_to_current_year(self):
-        for test_case in ["29 May", "1 Jan", "31 Dec", "28 Feb", "17 Aug"]:
-            expected = datetime.datetime.strptime(test_case, "%d %b")
-            actual = discussion_fetcher._parse_date("{} @ 1:23PM".format(test_case))
+        for data in ["29 May", "1 Jan", "31 Dec", "28 Feb", "17 Aug"]:
+            test_case = "{} @ 9:00am".format(data)
+            expected = datetime.datetime.strptime(test_case, "%d %b @ %I:%M%p")
+            actual = discussion_fetcher._parse_date(test_case)
             self.assertEqual(actual.year, datetime.datetime.now().year)
             self.assertEqual(actual.month, expected.month),
             self.assertEqual(actual.day, expected.day, "Failed for {}: ex={} act={}".format(test_case, expected, actual))
     
     def test_parse_date_parses_date_with_year(self):
-        for test_case in ["29 Jun, 2021", "1 Jan, 2002", "31 Dec, 1976", "16 Mar, 2015", "4 Oct, 2011"]:
-            expected = datetime.datetime.strptime(test_case, "%d %b, %Y")
-            actual = discussion_fetcher._parse_date("{} @ 11:59pm".format(test_case))
+        for data in ["29 Jun, 2021", "1 Jan, 2002", "31 Dec, 1976", "16 Mar, 2015", "4 Oct, 2011"]:
+            test_case = "{} @ 1:00am".format(data)
+            expected = datetime.datetime.strptime(test_case, "%d %b, %Y @ %I:%M%p")
+            actual = discussion_fetcher._parse_date(test_case)
             self.assertEqual(actual.year, expected.year)
             self.assertEqual(actual.month, expected.month, "Failed for {}: ex={} act={}".format(test_case, expected, actual))
             self.assertEqual(actual.day, expected.day)
