@@ -81,13 +81,14 @@ def _parse_date(raw_date):
 
     if len(raw_date.strip()) == 0 or raw_date.upper() == 'JUST NOW':
         return datetime.datetime.now()
-    if "minutes ago" in raw_date or "hours ago" in raw_date:
+    elif "minutes ago" in raw_date or "hour ago" or "hours ago" in raw_date:
         index = raw_date.index(' ') # the first space in "8 minutes ago"
         delta = int(raw_date[0:index])
         delta = datetime.timedelta(minutes=delta) if "minutes" in raw_date else datetime.timedelta(hours=delta)
         return datetime.datetime.now() + delta
     # If there's no year, add one!
-    if not ',' in raw_date:
+    elif not ',' in raw_date:
+        # May 23 => May 23, 2021
         raw_date = raw_date.replace(" @ ", ", {} @ ".format(datetime.datetime.now().year))
     
     return datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p')

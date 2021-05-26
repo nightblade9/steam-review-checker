@@ -21,7 +21,7 @@ class TestDicussionFetcher(unittest.TestCase):
                 "expected": 17
             },
             {
-                "game_name": "Oneons",
+                "game_name": "Oneons: Prisoners",
                 "app_id": 1346200,
                 "expected": 6
             },
@@ -46,7 +46,12 @@ class TestDicussionFetcher(unittest.TestCase):
             actual = review_fetcher._process_reviews(raw_reviews, app_id, data["game_name"])
 
             # Assert
+            # No per-field parsing necessary, we're just consuming a  JSON API call, minimal processing
             self.assertEqual(expected, len(actual), "Failed for {}".format(app_id))
+
+            first = actual[0]
+            self.assertEqual(app_id, first["app_id"])
+            self.assertEqual(data["game_name"], first["game_name"])
 
             for review in actual:
                 if review["language"] != "english": saw_non_english_review = True
