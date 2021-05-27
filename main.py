@@ -1,12 +1,13 @@
 from fetchers.discussion_fetcher import DiscussionFetcher
 from fetchers.game_fetcher import GameFetcher
 from fetchers.review_fetcher import ReviewFetcher
+import http.server
 import json
 import os
-import shutil
-import subprocess
+import socketserver
 import time
 
+PORT = 8000
 WEB_DIR = os.path.join(os.path.dirname(__file__), "web")
 WEB_DATA_DIR = os.path.join(WEB_DIR, "data")
 
@@ -17,7 +18,10 @@ class Main:
         self._fetch_all_data()
 
         # Start web server
-        subprocess.Popen(["python", "-m", "http.server"], cwd=WEB_DIR, shell=True)
+        os.chdir(WEB_DIR)
+        with socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler) as httpd:
+            print("Web server running on http://localhost:{}".format(PORT))
+            httpd.serve_forever()
 
     def _fetch_all_data(self):
         start_time = time.time()
