@@ -1,4 +1,4 @@
 config.json
 __pycache__
 node_modules
-web/public/data
+web/data
