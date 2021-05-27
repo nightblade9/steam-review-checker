@@ -20,6 +20,12 @@ body {
   width: 700px;
 }
 
+.review {
+  border: 3px double #ccc;
+  margin: 8px 0px;
+  padding: 8px;
+}
+
 .review-score {
   font-weight: bold;
 }
