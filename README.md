@@ -26,6 +26,12 @@ First, create a new `config.json` file in the repository root directory, and put
 }
 ```
 
+By default, the app refreshes data every 60 minutes. You can change this interval by adding an additional key/value pair to the config file. The following example changes it to refresh every minute:
+
+```json
+    "refreshDataIntervalMinutes": 1
+```
+
 Build the Python application:
 
 - Run `pip install -r requirements.txt` to install necessary pip packages
