@@ -21,7 +21,7 @@ class GameFetcher(SteamFetcher):
         response = urllib.request.urlopen(url).read()
         raw_html = response.decode('utf-8')
 
-        _parse_title(raw_html)
+        return _parse_title(raw_html)
     
 def _parse_title(raw_html):
         start_position = raw_html.index("<title>") + len("<title>")
