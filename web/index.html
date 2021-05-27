@@ -1,0 +1,56 @@
+<!DOCTYPE html5>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>Steam Review Checker</title>
+    <link href="main.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <div id="container">
+      Loading, or JavaScript required!
+    </div>
+
+    <template id="header-template">
+      <div class="header">
+        <p>
+          Looking at data for {numGames} games: {gameList}
+        </p>
+      </div>
+    </template>
+
+    <template id="discussion-container-template">
+      <div class="data-container">
+        <h1>{numDiscussions} discussions</h1>
+        <ul id="discussion-container">
+        </ul>
+      </div>
+    </template>
+
+    <template id="discussion-template">
+      <li class="discussion">
+        ({time} ago) <a href="{url}" target="_blank">{title}</a> ({game} - {numReplies} replies)
+      </li>
+    </template>
+
+    <template id="review-container-template">
+      <div class="data-container">
+        <h1>{numReviews} reviews</h1>
+        <div id="review-container">
+        </div>
+      </div>
+    </template>
+
+    <template id="review-template">
+      <div class="review">
+        <p>
+          <span class="review-score review-score-{score}">{posOrNeg}</span> review for {game} as of <strong>{time}</strong> ago:</span>
+        </p>
+        <p>{reviewContent}</p>
+        <hr/>
+      </div>
+    </template>
+
+    <script src="main.js"></script>
+  </body>
+</html>

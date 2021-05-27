@@ -1,0 +1,33 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background: #ddd;
+}
+
+.header, .data-container {
+  text-align: center;
+  background: white;
+  border: 10px solid #eee;
+  max-width: 100%;
+}
+
+.data-container {
+  float: left;
+  padding: 12px;
+  width: 700px;
+}
+
+.review-score {
+  font-weight: bold;
+}
+
+.review-score-positive {
+  color: blue;
+}
+
+.review-score-negative {
+  color: red;
+}
