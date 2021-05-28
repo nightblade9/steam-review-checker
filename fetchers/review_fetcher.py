@@ -1,4 +1,5 @@
 #!/bin/python3
+from fetchers.game_fetcher import GameFetcher
 import json
 from fetchers.steam_fetcher import SteamFetcher
 import time
@@ -67,6 +68,7 @@ def _process_reviews(reviews, app_id, game_name):
         days_ago = round(elapsed_seconds / (60 * 60 * 24))
         review["days_ago"] = days_ago
         review["game_name"] = game_name
+        review["url"] = GameFetcher._STEAM_APP_URL.format(app_id)
         
         all_reviews.append(review)
     

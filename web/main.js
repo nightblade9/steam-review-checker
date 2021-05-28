@@ -20,6 +20,8 @@ const render = () => {
   renderReviews(ctnr);
 };
 
+// Magically replaces all template values with the value from the dictionary.
+// e.g. replaces {game} with the value of data["game"]
 const applyDataToTemplate = (data, template) =>
   template.replaceAll(/\{([^\}]+)\}/g, (_, key) => data[key]);
 
@@ -74,11 +76,12 @@ const renderReviews = (ctnr) => {
     const template = document.querySelector("#review-template").innerHTML;
     reviews.forEach(_ => {
       const data = {
-        score: _.votes_up ? "positive" : "negative",
-        posOrNeg: _.votes_up ? "Positive" : "Negative",
+        score: _.voted_up ? "positive" : "negative",
+        posOrNeg: _.voted_up ? "Positive" : "Negative",
         game: metadata[_.app_id].game_name,
         time: getTime(_.days_ago),
         reviewContent: _.review,
+        url: _.url,
       };
       const html = applyDataToTemplate(data, template);
       reviewCtnr.insertAdjacentHTML("beforeend", html);

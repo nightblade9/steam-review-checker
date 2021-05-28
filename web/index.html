@@ -29,7 +29,7 @@
 
     <template id="discussion-template">
       <li class="discussion">
-        ({time} ago) <a href="{url}" target="_blank">{title}</a> (<strong>{game}</strong> - {numReplies} replies)
+        ({time} ago) <a href="{url}">{title}</a> (<strong>{game}</strong> - {numReplies} replies)
       </li>
     </template>
 
@@ -44,7 +44,7 @@
     <template id="review-template">
       <div class="review">
         <p>
-          <span class="review-score review-score-{score}">{posOrNeg}</span> review for {game} as of <strong>{time}</strong> ago:</span>
+          <span class="review-score review-score-{posOrNeg}">{posOrNeg}</span> review for <a href="{url}">{game}</a> as of <strong>{time}</strong> ago:</span>
         </p>
         <p>{reviewContent}</p>
       </div>
