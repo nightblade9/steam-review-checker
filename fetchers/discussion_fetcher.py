@@ -19,16 +19,18 @@ class DiscussionFetcher(SteamFetcher):
 
         for app_id in app_ids:
             url = DiscussionFetcher._STEAM_DISCUSSIONS_URL.format(app_id)
+            game_name = metadata[app_id]["game_name"]
             response = urllib.request.urlopen(url).read()
             raw_html = response.decode('utf-8')
-            discussions = _parse_discussions(raw_html, app_id, metadata[app_id]["game_name"])
+            discussions = _parse_discussions(raw_html, app_id, game_name)
             
             for discussion in discussions:
                 all_discussions.append(discussion)
+            
+            print("Fetched {} discussions for {}".format(len(discussions), game_name))
 
         # Sort by time descending, order of games isn't important
         all_discussions.sort(key=lambda x: x["date"], reverse=True)
-
         return all_discussions
 
 def _parse_discussions(raw_html, app_id, game_name):

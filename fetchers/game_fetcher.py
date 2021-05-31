@@ -10,10 +10,14 @@ class GameFetcher(SteamFetcher):
         all_data = {}
 
         for app_id in app_ids:
+            game_name = self._get_steam_game_title(app_id)
+
             all_data[app_id] = { 
-                "game_name": self._get_steam_game_title(app_id)
+                "game_name": game_name
             }
-        
+
+            print("Fetched metadata for {}".format(game_name))
+
         return all_data
 
     def _get_steam_game_title(self, app_id):
