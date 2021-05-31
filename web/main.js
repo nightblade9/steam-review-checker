@@ -1,8 +1,18 @@
 let metadata, reviews, discussions;
 
 const getData = async (file) => {
-  const res = await fetch(`data/${file}`);
-  return await res.json();
+
+  var headers = new Headers();
+  headers.append("pragma", "no-cache");
+  headers.append("cache-control", "no-cache");
+
+  const res = await fetch(`data/${file}`, {
+    method: "GET",
+    headers: headers
+  });
+
+  var toReturn = await res.json();
+  return toReturn;
 };
 
 const populateState = async () => {
