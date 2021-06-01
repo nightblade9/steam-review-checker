@@ -20,6 +20,7 @@ class ReviewFetcher(SteamFetcher):
         all_reviews = []
 
         for app_id in app_ids:
+            game_reviews = []
             game_name = metadata[app_id]["game_name"]
 
             # Fetch the first page, specifying a cursor; if we get 100 reviews back
@@ -27,19 +28,19 @@ class ReviewFetcher(SteamFetcher):
 
             cursor = "*" # first/default cursor
             data = _get_steam_reviews(app_id, cursor)
-            reviews = data["reviews"]
+            game_reviews.extend(data["reviews"])
             cursor = urllib.parse.quote_plus(data["cursor"])
 
             # More than one page of reviews!
             while len(data["reviews"]) == 100:
                 data = _get_steam_reviews(app_id, cursor)
+                game_reviews.extend(data["reviews"])
                 cursor = urllib.parse.quote_plus(data["cursor"])
-                for review in data["reviews"]:
-                    reviews.append(review)
             
-            print("Fetched {} reviews for {}".format(len(reviews), game_name))
+            print("Fetched {} reviews for {}".format(len(game_reviews), game_name))
         
-        all_reviews = _process_reviews(reviews, app_id, game_name)
+            game_reviews = _process_reviews(game_reviews, app_id, game_name)
+            all_reviews.extend(game_reviews)
         
         # Sort by time descending, order of games isn't important
         all_reviews.sort(key=lambda x: x["timestamp_created"], reverse=True)
