@@ -60,6 +60,9 @@ def _parse_discussions(raw_html, app_id, game_name):
         discussion_date = _parse_date(raw_date)
 
         days_ago = (datetime.datetime.now() - discussion_date).days
+        # small differences like "8 minutes ago" can become "-1 days" ago (time synch issues), make it 0 days ago
+        days_ago = max(days_ago, 0) 
+
         date_formatted = discussion_date.strftime("%Y-%m-%d %H:%M")
 
         discussions.append({
