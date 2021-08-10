@@ -13,9 +13,7 @@ class DiscussionFetcher(SteamFetcher):
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
 
     # Metadata is a dictionary of app_id => data
-    async def get_discussions(self, metadata):
-        config_json = self._read_config_json()
-        app_ids = config_json["appIds"]
+    async def get_discussions(self, app_ids, metadata):
         all_discussions = []
 
         async def populate_data_for_app(app_id):

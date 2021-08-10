@@ -5,9 +5,7 @@ from .steam_fetcher import SteamFetcher
 
 class GameFetcher(SteamFetcher):
 
-    async def get_game_metadata(self):
-        config_json = self._read_config_json()
-        app_ids = config_json["appIds"]
+    async def get_game_metadata(self, app_ids):
         all_data = {}
 
         async def populate_data_for_app(app_id):

@@ -15,9 +15,7 @@ class ReviewFetcher(SteamFetcher):
     _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&purchase_type=all&language=all&num_per_page=100&cursor={}"
     
     # Metadata is a dictionary of app_id => data
-    async def get_reviews(self, metadata):
-        config_json = self._read_config_json()
-        app_ids = config_json["appIds"]
+    async def get_reviews(self, app_ids, metadata):
         all_reviews = []
 
         async def populate_data_for_app(app_id):
