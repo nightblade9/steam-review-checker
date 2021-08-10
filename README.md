@@ -12,33 +12,49 @@ Well, I felt the same way. I created Steam Review Checker with one goal: create 
 
 Currently, Steam Review Checker shows reviews and discussions for your specified games, newest-first. Feel free to suggest more features or open a PR with changes.
 
-# Setup
+## Dependencies
 
 You'll need Python 3
-- Running `python` from the terminal should work.
-- If you're using `py.exe` instead, you'll need to update `main.py` to specify that command instead.
+- Running `pip` or `pipx` from the terminal should work.
+  Although the rest of these docs will only refer to `pip`, they should be interchangeable.
 
-First, create a new `config.json` file in the repository root directory, and put your Steam app IDs in it:
+## Quick Start
+
+Install via `pip`:
+
+```bash
+pip install "git+https://github.com/nightblade9/steam-review-checker.git"
+```
+
+File, CLI, or environmant variable based configuration is supported. See help and configuration details:
+
+```bash
+steam-review-checker.exe --help
+```
+
+Example config, which you can save at `~/steam-review-checker.json` or `<repo_root>/config.json`:
 
 ```json
 {
-    "appIds": [ 667510, 1342600 ]
+    "app_ids": [ 667510, 1342600 ],
+    "refresh_data_interval_minutes": 1
 }
 ```
 
-By default, the app refreshes data every 60 minutes. You can change this interval by adding an additional key/value pair to the config file. The following example changes it to refresh every minute:
+Run once configured:
 
-```json
-    "refreshDataIntervalMinutes": 1
+```bash
+steam-review-checker.exe
+
+# Or by providing `app_ids` to the command:
+steam-review-checker.exe [667510,1342600]
 ```
 
-Build the Python application:
+It runs, fetches game data, and starts the web-server. You can open a browser to `localhost:8000` to see the dashboard.
 
-- Run `pip install -r requirements.txt` to install necessary pip packages
-- Run `python main.py` to run the web application.
+## Development Environment
 
-It builds, runs, fetches game data, and starts the web-server. You can open a browser to `localhost:8000` to see the dashboard.
+After cloning, you can `pip install . --force -e` to install the local package in edit mode.
 
-# Development Environment
-
-For local development setup, you can fetch data, run the web-server and refresh the webpage whenever you make changes
+Then website changes can be picked up simply by refreshing the webpage,
+and Python changes by re-executing `steam-review-checker.exe`.
