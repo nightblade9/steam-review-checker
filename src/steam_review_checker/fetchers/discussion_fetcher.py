@@ -1,8 +1,9 @@
 #!/bin/python3
+import aiohttp
+import asyncio
 import datetime
 from re import L
 from .steam_fetcher import SteamFetcher
-import urllib
 import lxml.html
 
 # Scrapes Steam's discussion forums to get you the latest greatest data.
@@ -12,22 +13,31 @@ class DiscussionFetcher(SteamFetcher):
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
 
     # Metadata is a dictionary of app_id => data
-    def get_discussions(self, metadata):
+    async def get_discussions(self, metadata):
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
         all_discussions = []
 
-        for app_id in app_ids:
+        async def populate_data_for_app(app_id):
             url = DiscussionFetcher._STEAM_DISCUSSIONS_URL.format(app_id)
             game_name = metadata[app_id]["game_name"]
-            response = urllib.request.urlopen(url).read()
-            raw_html = response.decode('utf-8')
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as resp:
+                    raw_html = await resp.text()
+
             discussions = _parse_discussions(raw_html, app_id, game_name)
             
             for discussion in discussions:
                 all_discussions.append(discussion)
-            
+        
             print("Fetched {} discussions for {}".format(len(discussions), game_name))
+
+        await asyncio.gather(*[
+            populate_data_for_app(app_id)
+            for app_id
+            in app_ids
+        ])
 
         # Sort by time descending, order of games isn't important
         all_discussions.sort(key=lambda x: x["date"], reverse=True)

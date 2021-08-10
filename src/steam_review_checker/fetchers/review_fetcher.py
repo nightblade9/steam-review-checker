@@ -1,6 +1,7 @@
 #!/bin/python3
+import aiohttp
+import asyncio
 from .game_fetcher import GameFetcher
-import json
 from .steam_fetcher import SteamFetcher
 import time
 import urllib.parse
@@ -14,12 +15,12 @@ class ReviewFetcher(SteamFetcher):
     _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&purchase_type=all&language=all&num_per_page=100&cursor={}"
     
     # Metadata is a dictionary of app_id => data
-    def get_reviews(self, metadata):
+    async def get_reviews(self, metadata):
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
         all_reviews = []
 
-        for app_id in app_ids:
+        async def populate_data_for_app(app_id):
             game_reviews = []
             game_name = metadata[app_id]["game_name"]
 
@@ -27,13 +28,13 @@ class ReviewFetcher(SteamFetcher):
             # (the max requested), then request the next page, until we don't get 100.
 
             cursor = "*" # first/default cursor
-            data = _get_steam_reviews(app_id, cursor)
+            data = await _get_steam_reviews(app_id, cursor)
             game_reviews.extend(data["reviews"])
             cursor = urllib.parse.quote_plus(data["cursor"])
 
             # More than one page of reviews!
             while len(data["reviews"]) == 100:
-                data = _get_steam_reviews(app_id, cursor)
+                data = await _get_steam_reviews(app_id, cursor)
                 game_reviews.extend(data["reviews"])
                 cursor = urllib.parse.quote_plus(data["cursor"])
             
@@ -42,16 +43,23 @@ class ReviewFetcher(SteamFetcher):
             game_reviews = _process_reviews(game_reviews, app_id, game_name)
             all_reviews.extend(game_reviews)
         
+        await asyncio.gather(*[
+            populate_data_for_app(app_id)
+            for app_id
+            in app_ids
+        ])
+        
         # Sort by time descending, order of games isn't important
         all_reviews.sort(key=lambda x: x["timestamp_created"], reverse=True)
 
         return all_reviews
 
-def _get_steam_reviews(app_id, cursor):
+async def _get_steam_reviews(app_id, cursor):
     # Call the API for each app and get reviews
     url = ReviewFetcher._STEAM_REVIEWS_URL.format(app_id, cursor)
-    response = urllib.request.urlopen(url).read()
-    json_response = json.loads(response.decode('utf-8'))
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            json_response = await resp.json()
 
     if json_response["success"] != 1:
         print("Error: failed to fetch API for app {}; response was: success={})".format(app_id, json_response["success"]))
