@@ -2,7 +2,7 @@ import datetime
 import os
 import unittest
 
-from fetchers import discussion_fetcher
+from steam_review_checker.fetchers import discussion_fetcher
 
 class TestDicussionFetcher(unittest.TestCase):
 

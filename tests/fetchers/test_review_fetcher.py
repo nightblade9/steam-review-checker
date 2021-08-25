@@ -2,7 +2,7 @@ import json
 import os
 import unittest
 
-from fetchers import review_fetcher
+from steam_review_checker.fetchers import review_fetcher
 
 class TestReviewFetcher(unittest.TestCase):
 

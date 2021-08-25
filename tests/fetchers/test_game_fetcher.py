@@ -1,7 +1,6 @@
-import datetime
 import unittest
 
-from fetchers import game_fetcher
+from steam_review_checker.fetchers import game_fetcher
 
 class TestGameFetcher(unittest.TestCase):
 
