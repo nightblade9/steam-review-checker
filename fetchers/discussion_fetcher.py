@@ -1,5 +1,6 @@
 #!/bin/python3
 import datetime
+from datetime import timezone
 from re import L
 from fetchers.steam_fetcher import SteamFetcher
 import urllib
@@ -58,8 +59,10 @@ def _parse_discussions(raw_html, app_id, game_name):
 
         raw_date = dissected_nodes[2].strip()
         discussion_date = _parse_date(raw_date)
-
-        days_ago = (datetime.datetime.now() - discussion_date).days
+        # UTC to auto-detected local
+        discussion_date = discussion_date.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        now = datetime.datetime.now().replace(tzinfo=timezone.utc).astimezone(tz=None)
+        days_ago = (now - discussion_date).days
         # small differences like "8 minutes ago" can become "-1 days" ago (time synch issues), make it 0 days ago
         days_ago = max(days_ago, 0) 
 

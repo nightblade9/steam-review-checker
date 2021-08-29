@@ -37,3 +37,7 @@ body {
 .review-score-negative {
   color: red;
 }
+
+.underline {
+  text-decoration: underline;
+}
