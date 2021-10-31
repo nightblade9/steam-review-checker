@@ -29,12 +29,12 @@ class TestDicussionFetcher(unittest.TestCase):
     def test_parse_date_converts_minutes_ago_to_now_with_delta(self):
         for test_case in [8, 38, 1, 59]:
             actual = discussion_fetcher._parse_date("{} minutes ago".format(test_case))
-            now = datetime.datetime.now()
-            self.assertEqual(actual.year, now.year)
-            self.assertEqual(actual.month, now.month)
-            self.assertEqual(actual.day, now.day)
-            self.assertTrue(actual.hour == now.hour or actual.hour == now.hour + 1)
-            self.assertEqual(actual.min, now.min)
+            expected = datetime.datetime.now() + datetime.timedelta(minutes = test_case)
+            self.assertEqual(actual.year, expected.year)
+            self.assertEqual(actual.month, expected.month)
+            self.assertEqual(actual.day, expected.day)
+            self.assertTrue(actual.hour == expected.hour or actual.hour == expected.hour + 1)
+            self.assertEqual(actual.min, expected.min)
     
     def test_parse_date_converts_hours_ago_to_now_with_delta(self):
         for test_case in [17, 6, 1, 23]:
