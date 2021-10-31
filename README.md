@@ -2,7 +2,7 @@
 
 ![screenshot of dashboard](https://i.imgur.com/Lh9P8gI.png)
 
-[![Build Status](https://travis-ci.com/nightblade9/steam-review-checker.svg?branch=main)](https://travis-ci.com/nightblade9/steam-review-checker)
+[![Build status](https://github.com/nightblade9/steam-review-checker/actions/workflows/ci.yml/badge.svg)](https://github.com/nightblade9/steam-review-checker/actions/workflows/ci.yml)
 
 - Do you find it tedious to check Steam reviews daily to see if there's something new?
 - Do you often forget to subscribe to your own games' discussion forums on Steam?
