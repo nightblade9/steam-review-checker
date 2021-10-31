@@ -70,7 +70,8 @@ def _process_reviews(reviews, app_id, game_name):
         review["days_ago"] = days_ago
         review["game_name"] = game_name
         review["url"] = GameFetcher._STEAM_APP_URL.format(app_id)
-        
+        review["paid_review"] = not review["received_for_free"]
+
         all_reviews.append(review)
     
     return all_reviews

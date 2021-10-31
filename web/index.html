@@ -11,12 +11,16 @@
       Loading, or JavaScript required!
     </div>
 
-    <template id="header-template">
-      <div class="header">
-        <p>
-          Looking at data for {numGames} games: {gameList}
-        </p>
+    <template id="header-container-template">
+      <div class="full-width-container">
+        <h1>Games Summary</h1>
+        <div id="header-container">
+        </div>
       </div>
+    </template>
+
+    <template id="header-template">
+        <p><strong>{gameName}</strong>: {paidReviews} paid reviews</p>
     </template>
 
     <template id="discussion-container-template">

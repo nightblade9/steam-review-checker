@@ -39,13 +39,49 @@ const getTime = (daysAgo) =>
   daysAgo >= 365 ? Math.floor(daysAgo / 365) + " years" : daysAgo + " days";
 
 const renderHeader = (ctnr) => {
-  const template = document.querySelector("#header-template").innerHTML;
-  const data = {
-    numGames: Object.values(metadata).length,
-    gameList: Object.values(metadata).map(_ => _.game_name).join(", "),
-  };
-  const html = applyDataToTemplate(data, template);
-  ctnr.insertAdjacentHTML("beforeend", html);
+  { // Container
+    const template = document.querySelector("#header-container-template").innerHTML;
+    const html = applyDataToTemplate({}, template);
+    ctnr.insertAdjacentHTML("beforeend", html);
+  }
+
+  {
+    // individual records per-game
+    // amend metadata to add number of paid reviews
+    const reviewsPerGame = {};
+    Object.entries(reviews).forEach(review =>
+    {
+      var reviewData = review[1];
+      var appId = reviewData.app_id;
+      var isPaid = reviewData.paid_review;
+      if (isPaid)
+      {
+        if (!(appId in reviewsPerGame))
+        {
+          reviewsPerGame[appId] = 0;
+        }
+
+        reviewsPerGame[appId]++;
+      }
+    });
+
+    // Reformulate into expected data structure
+    const data = [];
+    Object.entries(metadata).forEach(([appId, gameMetadata]) => {
+      data[appId] = {
+        "paidReviews": reviewsPerGame[appId],
+        "gameName": gameMetadata["game_name"]
+      };
+    });
+
+    const headerContainer = ctnr.querySelector("#header-container");
+    const template = document.querySelector("#header-template").innerHTML;
+    data.forEach(_ => {
+      const html = applyDataToTemplate(_, template);
+      console.log(JSON.stringify(headerContainer));
+      headerContainer.insertAdjacentHTML("beforeend", html);
+    });
+  }
 };
 
 const renderDiscussions = (ctnr) => {
@@ -66,6 +102,7 @@ const renderDiscussions = (ctnr) => {
         numReplies: _.num_replies,
         title: _.title,
         url: _.url,
+        appId: _.appId
       };
       const html = applyDataToTemplate(data, template);
       discussionCtnr.insertAdjacentHTML("beforeend", html);
@@ -92,6 +129,8 @@ const renderReviews = (ctnr) => {
         time: getTime(_.days_ago),
         reviewContent: _.review,
         url: _.url,
+        paidReview: _.paid_review,
+        appId: _.app_id
       };
       const html = applyDataToTemplate(data, template);
       reviewCtnr.insertAdjacentHTML("beforeend", html);
