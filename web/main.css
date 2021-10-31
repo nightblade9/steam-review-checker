@@ -7,7 +7,7 @@ body {
   background: #ddd;
 }
 
-.header, .data-container {
+.header, .data-container, .full-width-container {
   text-align: center;
   background: white;
   border: 10px solid #eee;
