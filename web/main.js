@@ -41,7 +41,7 @@ const getTime = (daysAgo) =>
 const renderHeader = (ctnr) => {
   { // Container
     const template = document.querySelector("#header-container-template").innerHTML;
-    const html = applyDataToTemplate({}, template);
+    const html = template;
     ctnr.insertAdjacentHTML("beforeend", html);
   }
 
@@ -78,7 +78,6 @@ const renderHeader = (ctnr) => {
     const template = document.querySelector("#header-template").innerHTML;
     data.forEach(_ => {
       const html = applyDataToTemplate(_, template);
-      console.log(JSON.stringify(headerContainer));
       headerContainer.insertAdjacentHTML("beforeend", html);
     });
   }
