@@ -86,6 +86,8 @@ def _parse_date(raw_date):
     # 1) The most stable are dates older than a year: we get a full year, month, and day (e.g. April 29, 2019).
     # 2) Reviews this year, have no year attached to them (e.g. May 20).
     # 3) Really recent reviews can be, like, "8 minutes ago", 'Just now', etc.
+    #
+    # Note that Steam gives you this relative to your current timezone, NOT UTC.
 
     if len(raw_date.strip()) == 0 or raw_date.upper() == 'JUST NOW':
         return datetime.datetime.now()

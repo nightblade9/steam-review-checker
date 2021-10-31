@@ -39,12 +39,12 @@ class TestDicussionFetcher(unittest.TestCase):
     def test_parse_date_converts_hours_ago_to_now_with_delta(self):
         for test_case in [17, 6, 1, 23]:
             actual = discussion_fetcher._parse_date("{} hours ago".format(test_case))
-            now = datetime.datetime.now()
-            self.assertEqual(actual.year, now.year)
-            self.assertEqual(actual.month, now.month)
-            self.assertTrue(actual.day == now.day or actual.day == now.day + 1)
+            expected = datetime.datetime.now() + datetime.timedelta(hours = test_case)
+            self.assertEqual(actual.year, expected.year)
+            self.assertEqual(actual.month, expected.month)
+            self.assertTrue(actual.day == expected.day or actual.day == expected.day + 1)
             # Hour is too tricky to assert with rollover
-            self.assertEqual(actual.min, now.min)
+            self.assertEqual(actual.min, expected.min)
 
     def test_parse_date_converts_yearless_dates_to_current_year(self):
         for data in ["29 May", "1 Jan", "31 Dec", "28 Feb", "17 Aug"]:
