@@ -47,7 +47,7 @@ const renderHeader = (ctnr) => {
 
   {
     // individual records per-game
-    // amend metadata to add number of paid reviews
+    // amend metadata to add number of paid reviews to each game
     const reviewsPerGame = {};
     Object.entries(reviews).forEach(review =>
     {
@@ -69,7 +69,7 @@ const renderHeader = (ctnr) => {
     const data = [];
     Object.entries(metadata).forEach(([appId, gameMetadata]) => {
       data[appId] = {
-        "paidReviews": reviewsPerGame[appId],
+        "paidReviews": reviewsPerGame[appId] || 0, // 0 not undefined if no reviews
         "gameName": gameMetadata["game_name"]
       };
     });
