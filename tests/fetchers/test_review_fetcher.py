@@ -34,6 +34,7 @@ class TestReviewFetcher(unittest.TestCase):
     def test_parse_reviews_gets_all_types_and_languages_of_reviews(self):
         saw_non_paid_review = False
         saw_non_english_review = False
+        saw_counted_review = False # Steam paid purchase; not bought elsewhere or free key
 
         for data in TestReviewFetcher.TEST_CASES:
             app_id = data["app_id"]
@@ -55,6 +56,8 @@ class TestReviewFetcher(unittest.TestCase):
             for review in actual:
                 if review["language"] != "english": saw_non_english_review = True
                 if review["received_for_free"] == True: saw_non_paid_review = True
+                if review["received_for_free"] == False and review["steam_purchase"] == True: saw_counted_review = True
             
             self.assertTrue(saw_non_paid_review)
             self.assertTrue(saw_non_english_review)
+            self.assertTrue(saw_counted_review)

@@ -70,7 +70,9 @@ def _process_reviews(reviews, app_id, game_name):
         review["days_ago"] = days_ago
         review["game_name"] = game_name
         review["url"] = GameFetcher._STEAM_APP_URL.format(app_id)
-        review["paid_review"] = not review["received_for_free"]
+        # Steam purchases only (not third-party keys) that are paid, not free, count.
+        # Nothing else counts (e.g. bought elsewhere, free key given).
+        review["counted_review"] = review["steam_purchase"] and not review["received_for_free"]
 
         all_reviews.append(review)
     

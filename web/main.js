@@ -53,8 +53,8 @@ const renderHeader = (ctnr) => {
     {
       var reviewData = review[1];
       var appId = reviewData.app_id;
-      var isPaid = reviewData.paid_review;
-      if (isPaid)
+      var isCountedReview = reviewData.counted_review;
+      if (isCountedReview)
       {
         if (!(appId in reviewsPerGame))
         {
@@ -128,7 +128,7 @@ const renderReviews = (ctnr) => {
         time: getTime(_.days_ago),
         reviewContent: _.review,
         url: _.url,
-        paidReview: _.paid_review,
+        isCountedReview: _.is_counted_review,
         appId: _.app_id
       };
       const html = applyDataToTemplate(data, template);
