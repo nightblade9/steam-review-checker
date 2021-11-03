@@ -48,28 +48,58 @@ const renderHeader = (ctnr) => {
   {
     // individual records per-game
     // amend metadata to add number of paid reviews to each game
+    const countedReviewsPerGame = {};
+
+    // TODO: move this into Python so it's testable
+    // todo; delete this and the code below if we don't want to maintain counting
+    // reviews how Steam does. That forces us to keep maintaining to meet their logic,
+    // which is often opaque and confusing (e.g. show only Steam purchases, except if
+    // all your purchases are non-Steam?!)
     const reviewsPerGame = {};
+
     Object.entries(reviews).forEach(review =>
     {
       var reviewData = review[1];
       var appId = reviewData.app_id;
+      
+      if (!(appId in reviewsPerGame))
+      {
+        reviewsPerGame[appId] = 0;
+      }
+      reviewsPerGame[appId]++;
+
       var isCountedReview = reviewData.counted_review;
       if (isCountedReview)
       {
-        if (!(appId in reviewsPerGame))
+        if (!(appId in countedReviewsPerGame))
         {
-          reviewsPerGame[appId] = 0;
+          countedReviewsPerGame[appId] = 0;
         }
 
-        reviewsPerGame[appId]++;
+        countedReviewsPerGame[appId]++;
       }
     });
 
     // Reformulate into expected data structure
     const data = [];
     Object.entries(metadata).forEach(([appId, gameMetadata]) => {
+      var numCountedReviews = 0; // default to zero if game has 0 reviews!
+      if (appId in countedReviewsPerGame)
+      {
+        numCountedReviews = countedReviewsPerGame[appId];
+      }
+    
+      // Corner case we saw with Viking Trickshot: 49 off-steam reviews, 0 on-steam.
+      // Steam shows 49 reviews under the capsule.
+      // Contrast to Lonely Birds: 9 reviews, 8 off-steam, capsule shows 1 review.
+      console.log(numCountedReviews + " vs " + reviewsPerGame[appId])
+      if (numCountedReviews == 0 && reviewsPerGame[appId] > 0)
+      {
+        numCountedReviews = reviewsPerGame[appId];
+      }
+
       data[appId] = {
-        "paidReviews": reviewsPerGame[appId] || 0, // 0 not undefined if no reviews
+        "countedReviews": numCountedReviews,
         "gameName": gameMetadata["game_name"]
       };
     });
