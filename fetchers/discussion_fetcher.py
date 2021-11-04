@@ -55,6 +55,10 @@ def _parse_discussions(raw_html, app_id, game_name):
 
         title_and_author = dissected_nodes[7].split('\n')
         title = title_and_author[0].strip()
+        # Normal discussions have eight groups; pinned ones have 10.
+        # Group 7 just has "pinned," while group 9 has the actual title.
+        if len(dissected_nodes) == 10:
+            title = "{} {}".format(title, dissected_nodes[9].split('\t\t\t')[0].strip()).strip()
         author = title_and_author[-1].strip()
 
         raw_date = dissected_nodes[2].strip()

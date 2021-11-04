@@ -83,6 +83,35 @@ class TestDicussionFetcher(unittest.TestCase):
         self.assertEqual(2, int(discussion["num_replies"]))
         self.assertEqual("Oneons", discussion["game_name"])
     
+    # Make sure we get "PINNED: <title>" discussions correctly, via Feudal Kingdoms
+    def test_parse_discussions_gets_title_for_pinned_discussions(self):
+        # Arrange
+        raw_html = ""
+        app_id = 1349900
+        
+        with open(os.path.join("tests", "test_data", "steam_discussions", "{}.html".format(app_id)), 'r', encoding="utf-8") as file_handle:
+            raw_html = file_handle.read()
+        
+        # Act
+        actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Feudal Kingdoms")
+
+        # Assert
+        expected_titles = [
+            "PINNED: Feudal Kingdoms Early Access Release postponed",
+            "PINNED: Feedback",
+            "PINNED: Bugs",
+            "PINNED: Support",
+            "Dead",
+            "game delayed"
+        ]
+
+        self.assertEqual(len(expected_titles), len(actual))
+
+        for i in range(len(expected_titles)):
+            expected_title = expected_titles[i]
+            actual_discussion = actual[i]
+            self.assertEqual(expected_title, actual_discussion["title"])
+    
     # For other games: discussion count is sufficient.
     def test_parse_discussions_can_parse_up_to_15_discussions(self):
         test_cases = [
