@@ -48,28 +48,24 @@ const renderHeader = (ctnr) => {
   {
     // individual records per-game
     // amend metadata to add number of paid reviews to each game
-    const countedReviewsPerGame = {};
+    const reviewsPerGame = {};
     Object.entries(reviews).forEach(review =>
     {
       var reviewData = review[1];
       var appId = reviewData.app_id;
-      var isCountedReview = reviewData.counted_review;
-      if (isCountedReview)
+      if (!(appId in reviewsPerGame))
       {
-        if (!(appId in countedReviewsPerGame))
-        {
-          countedReviewsPerGame[appId] = 0;
-        }
-
-        countedReviewsPerGame[appId]++;
+        reviewsPerGame[appId] = 0;
       }
+
+      reviewsPerGame[appId]++;
     });
 
     // Reformulate into expected data structure
     const data = [];
     Object.entries(metadata).forEach(([appId, gameMetadata]) => {
       data[appId] = {
-        "countedReviews": countedReviewsPerGame[appId] || 0, // 0 not undefined if no reviews
+        "reviews": reviewsPerGame[appId] || 0, // 0 not undefined if no reviews
         "gameName": gameMetadata["game_name"]
       };
     });
