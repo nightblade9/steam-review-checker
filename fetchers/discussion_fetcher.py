@@ -9,6 +9,14 @@ import lxml.html
 # Scrapes Steam's discussion forums to get you the latest greatest data.
 class DiscussionFetcher(SteamFetcher):
 
+    # In December 2021, Steam changed the discussion date; it went from "13 Aug" to "Aug 13" - but that's not all.
+    # What's worse: some clients see one format, while some see the other - at the same time, on the same page!
+    # It's clear we need to be more robust here and allow mapping to multiple formats.
+    _DATETIME_FORMAT_STRINGS = [
+        '%b %d, %Y @ %I:%M%p', # circa 2020
+        '%d %b, %Y @ %I:%M%p' # circa Dec. 2021
+    ]
+
     _STEAM_DISCUSSIONS_URL = SteamFetcher._STEAM_COMMUNITY_URL + "/discussions/"
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
 
@@ -92,7 +100,6 @@ def _parse_date(raw_date):
     # 3) Really recent reviews can be, like, "8 minutes ago", 'Just now', etc.
     #
     # Note that Steam gives you this relative to your current timezone, NOT UTC.
-
     if len(raw_date.strip()) == 0 or raw_date.upper() == 'JUST NOW':
         return datetime.datetime.now()
     elif "minutes ago" in raw_date or "hour ago" in raw_date or "hours ago" in raw_date:
@@ -105,4 +112,12 @@ def _parse_date(raw_date):
         # May 23 => May 23, 2021
         raw_date = raw_date.replace(" @ ", ", {} @ ".format(datetime.datetime.now().year))
     
-    return datetime.datetime.strptime(raw_date, '%d %b, %Y @ %I:%M%p')
+    ### Try to parse all seen/known formats, throwing if none of them match
+    last_error = None
+    for date_format in DiscussionFetcher._DATETIME_FORMAT_STRINGS:
+        try:
+            return datetime.datetime.strptime(raw_date, date_format)
+        except ValueError as v:
+            last_error = v
+    # If we reached here, the date-time isn't *any* known valid format
+    raise last_error
