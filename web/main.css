@@ -20,6 +20,10 @@ body {
   width: 640px;
 }
 
+#discussions-container {
+  width: 750px;
+}
+
 .review {
   border: 3px double #ccc;
   margin: 8px 0px;

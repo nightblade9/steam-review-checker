@@ -25,7 +25,7 @@
     </template>
 
     <template id="discussion-container-template">
-      <div class="data-container">
+      <div class="data-container"  id="discussions-container">
         <h1>{numDiscussions} discussions</h1>
         <ul id="discussion-container">
         </ul>
@@ -34,7 +34,7 @@
 
     <template id="discussion-template">
       <li class="discussion">
-        <span class="underline">{game}</span>: [{subforum}] <a href="{url}">{title}</a> ({numReplies} posts) - updated <strong>{time}</strong> ago
+        <span class="underline">{game}</span>: <a href="{url}">{subforum} | {title}</a> ({numReplies} posts) - updated <strong>{time}</strong> ago
       </li>
     </template>
 
