@@ -20,8 +20,8 @@ class DiscussionFetcher(SteamFetcher):
     # Steam has multiple "forums" - while we can parse this, for now, we just look at the main two:
     # The default one ("General Discussions"), and "Events & Announcements."
     _STEAM_DISCUSSIONS_URLS = {
-        "general": SteamFetcher._STEAM_COMMUNITY_URL + "/discussions/",
-        "announcements": SteamFetcher._STEAM_COMMUNITY_URL + "/eventcomments",
+        "General": SteamFetcher._STEAM_COMMUNITY_URL + "/discussions/",
+        "Announcements": SteamFetcher._STEAM_COMMUNITY_URL + "/eventcomments",
     }
     
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
@@ -39,13 +39,10 @@ class DiscussionFetcher(SteamFetcher):
                 game_name = metadata[app_id]["game_name"]
                 response = urllib.request.urlopen(url).read()
                 raw_html = response.decode('utf-8')
-                discussions = _parse_discussions(raw_html, app_id, game_name)
+                discussions = _parse_discussions(raw_html, app_id, game_name, subforum_type)
                 
                 for discussion in discussions:
-                    # Don't show news and announcements with zero comments - that's us (the game author) posting
-                    # them, but nobody replies to them.
-                    if subforum_type != "announcements" or discussion["num_replies"] > 0:
-                        all_discussions.append(discussion)
+                    all_discussions.append(discussion)
                 
                 print("Fetched {} discussions for {}'s {} subforum".format(len(discussions), game_name, subforum_type))
 
@@ -53,7 +50,7 @@ class DiscussionFetcher(SteamFetcher):
             all_discussions.sort(key=lambda x: x["date"], reverse=True)
             return all_discussions
 
-def _parse_discussions(raw_html, app_id, game_name):
+def _parse_discussions(raw_html, app_id, game_name, subforum_type):
     discussions = []
     # Repair HTML so we can use XPath
     raw_html = raw_html.replace('class="searchtext"', '')
@@ -101,7 +98,8 @@ def _parse_discussions(raw_html, app_id, game_name):
             "url": discussion_url,
             "num_replies": num_replies,
             "days_ago": days_ago,
-            "game_name": game_name
+            "game_name": game_name,
+            "subforum": subforum_type
         })
     
     return discussions
