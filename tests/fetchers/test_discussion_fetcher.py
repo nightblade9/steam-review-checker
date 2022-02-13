@@ -75,7 +75,7 @@ class TestDicussionFetcher(unittest.TestCase):
             raw_html = file_handle.read()
         
         expected_discussions = 3
-        actuals = discussion_fetcher._parse_discussions(raw_html, app_id, "Oneons")
+        actuals = discussion_fetcher._parse_discussions(raw_html, app_id, "Oneons", "General")
 
         self.assertEqual(expected_discussions, len(actuals))
         discussion = actuals[-1]
@@ -97,7 +97,7 @@ class TestDicussionFetcher(unittest.TestCase):
                 raw_html = file_handle.read()
             
             # Act
-            actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Feudal Kingdoms")
+            actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Feudal Kingdoms", "General")
 
             # Assert
             expected_titles = [
@@ -186,6 +186,6 @@ class TestDicussionFetcher(unittest.TestCase):
                 with open(os.path.join("tests", "test_data", "steam_discussions", data_directory, "{}.html".format(app_id)), 'r', encoding="utf-8") as file_handle:
                     raw_html = file_handle.read()
                 
-                actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Title goes here")
+                actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Title goes here", "Category goes here")
 
                 self.assertEqual(expected, len(actual), "Failed with {} data on {}".format(data_directory, app_id)) # maxes out at 15 discussions
