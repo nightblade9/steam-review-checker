@@ -17,7 +17,13 @@ class DiscussionFetcher(SteamFetcher):
         '%d %b, %Y @ %I:%M%p' # circa Dec. 2021
     ]
 
-    _STEAM_DISCUSSIONS_URL = SteamFetcher._STEAM_COMMUNITY_URL + "/discussions/"
+    # Steam has multiple "forums" - while we can parse this, for now, we just look at the main two:
+    # The default one ("General Discussions"), and "Events & Announcements."
+    _STEAM_DISCUSSIONS_URLS = {
+        "general": SteamFetcher._STEAM_COMMUNITY_URL + "/discussions/",
+        "announcements": SteamFetcher._STEAM_COMMUNITY_URL + "/eventcomments",
+    }
+    
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
 
     # Metadata is a dictionary of app_id => data
@@ -27,20 +33,25 @@ class DiscussionFetcher(SteamFetcher):
         all_discussions = []
 
         for app_id in app_ids:
-            url = DiscussionFetcher._STEAM_DISCUSSIONS_URL.format(app_id)
-            game_name = metadata[app_id]["game_name"]
-            response = urllib.request.urlopen(url).read()
-            raw_html = response.decode('utf-8')
-            discussions = _parse_discussions(raw_html, app_id, game_name)
-            
-            for discussion in discussions:
-                all_discussions.append(discussion)
-            
-            print("Fetched {} discussions for {}".format(len(discussions), game_name))
+            for subforum_type in DiscussionFetcher._STEAM_DISCUSSIONS_URLS:
+                subforum_url = DiscussionFetcher._STEAM_DISCUSSIONS_URLS[subforum_type]
+                url = subforum_url.format(app_id)
+                game_name = metadata[app_id]["game_name"]
+                response = urllib.request.urlopen(url).read()
+                raw_html = response.decode('utf-8')
+                discussions = _parse_discussions(raw_html, app_id, game_name)
+                
+                for discussion in discussions:
+                    # Don't show news and announcements with zero comments - that's us (the game author) posting
+                    # them, but nobody replies to them.
+                    if subforum_type != "announcements" or discussion["num_replies"] > 0:
+                        all_discussions.append(discussion)
+                
+                print("Fetched {} discussions for {}'s {} subforum".format(len(discussions), game_name, subforum_type))
 
-        # Sort by time descending, order of games isn't important
-        all_discussions.sort(key=lambda x: x["date"], reverse=True)
-        return all_discussions
+            # Sort by time descending, order of games isn't important
+            all_discussions.sort(key=lambda x: x["date"], reverse=True)
+            return all_discussions
 
 def _parse_discussions(raw_html, app_id, game_name):
     discussions = []
@@ -59,14 +70,16 @@ def _parse_discussions(raw_html, app_id, game_name):
 
         dissected_nodes = node.text_content().strip().split('\t\t\t\t')
         # Dissected nodes is eight items, including some empty ones.
-        num_replies = dissected_nodes[0].strip()
+        num_replies = int(dissected_nodes[0].strip())
 
         title_and_author = dissected_nodes[7].split('\n')
         title = title_and_author[0].strip()
+        
         # Normal discussions have eight groups; pinned ones have 10.
         # Group 7 just has "pinned," while group 9 has the actual title.
         if len(dissected_nodes) == 10:
             title = "{} {}".format(title, dissected_nodes[9].split('\t\t\t')[0].strip()).strip()
+
         author = title_and_author[-1].strip()
 
         raw_date = dissected_nodes[2].strip()
