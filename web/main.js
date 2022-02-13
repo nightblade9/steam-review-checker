@@ -91,14 +91,16 @@ const renderDiscussions = (ctnr) => {
     const discussionCtnr = ctnr.querySelector("#discussion-container");
     const template = document.querySelector("#discussion-template").innerHTML;
     discussions.forEach(_ => {
-      const data = {
+      var data = {
         game: metadata[_.app_id].game_name,
         time: getTime(_.days_ago),
         numReplies: _.num_replies,
         title: _.title,
         url: _.url,
-        appId: _.appId
+        appId: _.appId,
+        subforum: _.subforum
       };
+      Object.assign(data, _) // merge all fields from the JSON object
       const html = applyDataToTemplate(data, template);
       discussionCtnr.insertAdjacentHTML("beforeend", html);
     });
@@ -117,7 +119,7 @@ const renderReviews = (ctnr) => {
     const reviewCtnr = ctnr.querySelector("#review-container");
     const template = document.querySelector("#review-template").innerHTML;
     reviews.forEach(_ => {
-      const data = {
+      var data = {
         score: _.voted_up ? "positive" : "negative",
         posOrNeg: _.voted_up ? "Positive" : "Negative",
         game: metadata[_.app_id].game_name,
@@ -127,6 +129,7 @@ const renderReviews = (ctnr) => {
         isCountedReview: _.is_counted_review,
         appId: _.app_id
       };
+      Object.assign(data, _) // merge all fields from the JSON object
       const html = applyDataToTemplate(data, template);
       reviewCtnr.insertAdjacentHTML("beforeend", html);
     });
