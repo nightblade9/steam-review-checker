@@ -68,7 +68,7 @@ const renderHeader = (ctnr) => {
 
     Object.entries(discussions).forEach(discussion =>
     {
-      var discussionData = discussions[1];
+      var discussionData = discussion[1];
       var appId = discussionData.app_id;
       if (!(appId in discussionsPerGame))
       {

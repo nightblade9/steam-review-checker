@@ -46,9 +46,9 @@ class DiscussionFetcher(SteamFetcher):
                 
                 print("Fetched {} discussions for {}'s {} subforum".format(len(discussions), game_name, subforum_type))
 
-            # Sort by time descending, order of games isn't important
-            all_discussions.sort(key=lambda x: x["date"], reverse=True)
-            return all_discussions
+        # Sort by time descending, order of games isn't important
+        all_discussions.sort(key=lambda x: x["date"], reverse=True)
+        return all_discussions
 
 def _parse_discussions(raw_html, app_id, game_name, subforum_type):
     discussions = []
