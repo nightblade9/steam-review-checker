@@ -1,6 +1,8 @@
 #!/bin/python3
+from configparser import ParsingError
 import datetime
 from datetime import timezone
+from lib2to3.pgen2.parse import ParseError
 from re import L
 from fetchers.steam_fetcher import SteamFetcher
 import urllib
@@ -69,13 +71,18 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         # Dissected nodes is eight items, including some empty ones.
         num_replies = int(dissected_nodes[0].strip())
 
-        title_and_author = dissected_nodes[7].split('\n')
+        # Normal discussions have eight groups; pinned ones have 10. Some announcements have 9.
+        # Seems like the last node is always the title.
+        title_index = len(dissected_nodes) - 1
+        title_and_author = dissected_nodes[title_index].split('\n')
         title = title_and_author[0].strip()
-        
-        # Normal discussions have eight groups; pinned ones have 10.
-        # Group 7 just has "pinned," while group 9 has the actual title.
+
+        # Pinned are ten groups. /shrug
         if len(dissected_nodes) == 10:
-            title = "{} {}".format(title, dissected_nodes[9].split('\t\t\t')[0].strip()).strip()
+            title = "📌 {}".format(title)
+        
+        if len(title.strip()) == 0:
+            raise RuntimeError("Discussion title is empty for {}".format(discussion_url))
 
         author = title_and_author[-1].strip()
 

@@ -86,7 +86,7 @@ class TestDicussionFetcher(unittest.TestCase):
         self.assertEqual(2, int(discussion["num_replies"]))
         self.assertEqual("Oneons", discussion["game_name"])
     
-    # Make sure we get "PINNED: <title>" discussions correctly, via Feudal Kingdoms
+    # Make sure we get "📌 <title>" discussions correctly, via Feudal Kingdoms
     def test_parse_discussions_gets_title_for_pinned_discussions(self):
         # Arrange
         raw_html = ""
@@ -101,10 +101,10 @@ class TestDicussionFetcher(unittest.TestCase):
 
             # Assert
             expected_titles = [
-                "PINNED: Feudal Kingdoms Early Access Release postponed",
-                "PINNED: Feedback",
-                "PINNED: Bugs",
-                "PINNED: Support",
+                "📌 Feudal Kingdoms Early Access Release postponed",
+                "📌 Feedback",
+                "📌 Bugs",
+                "📌 Support",
                 "Dead",
                 "game delayed"
             ]
@@ -174,10 +174,18 @@ class TestDicussionFetcher(unittest.TestCase):
                     "app_id": "597820-lastpage",
                     "expected": 26
                 }
+            ],
+            "2022": [
+                {
+                    # Page one had a title that was 11 nodes instead of 7-9, idk why.
+                    "game_name": "Viking Trickshot",
+                    "app_id": 1057990,
+                    "expected": 10
+                }
             ]
         }
 
-        for data_directory in ["2020", "2021"]:
+        for data_directory in test_cases.keys():
             for data in test_cases[data_directory]:
                 raw_html = ""
                 app_id = data["app_id"]
