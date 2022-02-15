@@ -46,9 +46,11 @@ const renderHeader = (ctnr) => {
   }
 
   {
-    // individual records per-game
-    // amend metadata to add number of paid reviews to each game
+    // summary of individual records per-game
+    
+    // amend metadata to add number of reviews to each game
     const reviewsPerGame = {};
+
     Object.entries(reviews).forEach(review =>
     {
       var reviewData = review[1];
@@ -61,11 +63,28 @@ const renderHeader = (ctnr) => {
       reviewsPerGame[appId]++;
     });
 
+    // amend metadata to add number of discussions to each game
+    const discussionsPerGame = {};
+
+    Object.entries(discussions).forEach(discussion =>
+    {
+      var discussionData = discussions[1];
+      var appId = discussionData.app_id;
+      if (!(appId in discussionsPerGame))
+      {
+        discussionsPerGame[appId] = 0;
+      }
+
+      discussionsPerGame[appId]++;
+    });
+  
+
     // Reformulate into expected data structure
     const data = [];
     Object.entries(metadata).forEach(([appId, gameMetadata]) => {
       data[appId] = {
-        "reviews": reviewsPerGame[appId] || 0, // 0 not undefined if no reviews
+        "reviews": reviewsPerGame[appId] || 0, // 0 not undefined if no reviews,
+        "discussions": discussionsPerGame[appId] || 0,
         "gameName": gameMetadata["game_name"]
       };
     });
