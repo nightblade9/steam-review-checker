@@ -1,6 +1,6 @@
 # Steam Review Checker
 
-![screenshot](https://user-images.githubusercontent.com/31222662/140442338-08c043c2-7177-474f-89c8-0819e594663d.png)
+![screenshot](screenshot.png)
 
 [![Build status](https://github.com/nightblade9/steam-review-checker/actions/workflows/ci.yml/badge.svg)](https://github.com/nightblade9/steam-review-checker/actions/workflows/ci.yml)
 
