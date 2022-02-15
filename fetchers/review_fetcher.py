@@ -13,6 +13,10 @@ class ReviewFetcher(SteamFetcher):
     # purchase_type=all: ALL reviews, paid (buyers) and non-paid (free key, etc.)
     _STEAM_REVIEWS_URL = "https://store.steampowered.com/appreviews/{}?json=1&filter=recent&purchase_type=all&language=all&num_per_page=100&cursor={}"
     
+    # Review URL isn't natively available through the API or the website; but it is derivable
+    # from the user name and app ID. Therefore, this may break in the future.
+    _STEAM_REVIEW_PERMALINK = "https://steamcommunity.com/profiles/{}/recommended/{}"
+
     # Metadata is a dictionary of app_id => data
     def get_reviews(self, metadata):
         config_json = self._read_config_json()
@@ -73,6 +77,7 @@ def _process_reviews(reviews, app_id, game_name):
         # Steam purchases only (not third-party keys) that are paid, not free, count.
         # Nothing else counts (e.g. bought elsewhere, free key given).
         review["counted_review"] = review["steam_purchase"] and not review["received_for_free"]
+        review["url"] = ReviewFetcher._STEAM_REVIEW_PERMALINK.format(review["author"]["steamid"], app_id)
 
         all_reviews.append(review)
     
