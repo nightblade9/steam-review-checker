@@ -1,12 +1,9 @@
 #!/bin/python3
-from configparser import ParsingError
 import datetime
 from datetime import timezone
-from lib2to3.pgen2.parse import ParseError
-from re import L
 from fetchers.steam_fetcher import SteamFetcher
-import urllib
 import lxml.html
+import urllib
 
 # Scrapes Steam's discussion forums to get you the latest greatest data.
 class DiscussionFetcher(SteamFetcher):
@@ -15,8 +12,8 @@ class DiscussionFetcher(SteamFetcher):
     # What's worse: some clients see one format, while some see the other - at the same time, on the same page!
     # It's clear we need to be more robust here and allow mapping to multiple formats.
     _DATETIME_FORMAT_STRINGS = [
-        '%b %d, %Y @ %I:%M%p', # circa 2020
-        '%d %b, %Y @ %I:%M%p' # circa Dec. 2021
+        '%d %b, %Y @ %I:%M%p', # circa Dec. 2021
+        '%b %d, %Y @ %I:%M%p' # circa 2020
     ]
 
     # Steam has multiple "forums" - while we can parse this, for now, we just look at the main two:
@@ -27,6 +24,11 @@ class DiscussionFetcher(SteamFetcher):
     }
     
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
+
+    # Magic numbers. Normal number of nodes is 8.
+    _NUM_NODES_IF_DISCUSSION_AWARD = 9
+    _NUM_NODES_FOR_PINNED_DISCUSSIONS = 10
+    _NUM_NODES_FOR_PINNED_AND_AWARD = 11
 
     # Metadata is a dictionary of app_id => data
     def get_discussions(self, metadata):
@@ -68,25 +70,36 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         discussion_url = link_node.attrib["href"]
 
         dissected_nodes = node.text_content().strip().split('\t\t\t\t')
+        num_dissected_nodes = len(dissected_nodes)
         # Dissected nodes is eight items, including some empty ones.
         num_replies = int(dissected_nodes[0].strip())
 
         # Normal discussions have eight groups; pinned ones have 10. Some announcements have 9.
         # Seems like the last node is always the title.
-        title_index = len(dissected_nodes) - 1
+        title_index = num_dissected_nodes - 1
         title_and_author = dissected_nodes[title_index].split('\n')
         title = title_and_author[0].strip()
 
         # Pinned are ten groups. /shrug
-        if len(dissected_nodes) == 10:
+        if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_DISCUSSIONS:
             title = "📌 {}".format(title)
         
         if len(title.strip()) == 0:
             raise RuntimeError("Discussion title is empty for {}".format(discussion_url))
 
         author = title_and_author[-1].strip()
+        
+        # Discussions with a shiny award, have an extra node (Viking Trickshot)
+        # Discussions that are pinned AND have a shiny award, have extra nodes (Biomutant)
+        # In both cases, look for the date a node past its usual spot.
+        date_index = 2
+        if num_dissected_nodes == DiscussionFetcher._NUM_NODES_IF_DISCUSSION_AWARD or num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_AND_AWARD:
+            date_index = 3
+        raw_date = dissected_nodes[date_index].strip()
 
-        raw_date = dissected_nodes[2].strip()
+        if len(raw_date.strip()) == 0:
+            raise RuntimeError("Discussion date failed to parse (empty string): i={} count={}".format(date_index, num_dissected_nodes))
+
         discussion_date = _parse_date(raw_date)
         # UTC to auto-detected local
         discussion_date = discussion_date.replace(tzinfo=timezone.utc).astimezone(tz=None)

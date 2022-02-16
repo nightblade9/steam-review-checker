@@ -115,7 +115,29 @@ class TestDicussionFetcher(unittest.TestCase):
                 expected_title = expected_titles[i]
                 actual_discussion = actual[i]
                 self.assertEqual(expected_title, actual_discussion["title"])
+
+    # Discussions with an award have the date in a different place.    
+    def test_parse_discussions_gets_date_for_awarded_discussions_discussions(self):
+        # Arrange
+        raw_html = ""
+        app_id = 1057990
         
+        with open(os.path.join("tests", "test_data", "steam_discussions", "2022", "{}.html".format(app_id)), 'r', encoding="utf-8") as file_handle:
+            raw_html = file_handle.read()
+        
+        # Act
+        actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Viking Trickshot", "Events and Announcements")
+
+        # Assert
+        now = datetime.datetime.now() 
+
+        for i in range(len(actual)):
+            actual_discussion = actual[i]
+            raw_date = actual_discussion["date"]
+            # If parsing failed, the date would be "0 days ago."
+            # Since the discussions all predate 2022, it's easy enough to check the year.
+            self.assertTrue("2021" in raw_date or "2020" in raw_date or "2019" in raw_date)
+
     # For other games: discussion count is sufficient.
     def test_parse_discussions_can_parse_up_to_max_discussions(self):
         test_cases = {
