@@ -87,7 +87,7 @@ class TestDicussionFetcher(unittest.TestCase):
         self.assertEqual("Oneons", discussion["game_name"])
     
     # Make sure we get "📌 <title>" discussions correctly, via Feudal Kingdoms
-    def test_parse_discussions_gets_title_for_pinned_discussions(self):
+    def test_parse_discussions_gets_emoji_title_for_pinned_discussions(self):
         # Arrange
         raw_html = ""
         app_id = 1349900
@@ -116,8 +116,32 @@ class TestDicussionFetcher(unittest.TestCase):
                 actual_discussion = actual[i]
                 self.assertEqual(expected_title, actual_discussion["title"])
 
+    # Make sure we get "✅ <title>" discussions answered, via Frankenstorm TD
+    def test_parse_discussions_gets_emoji_title_for_answered_discussions(self):
+        # Arrange
+        raw_html = ""
+        app_id = 1672920
+        
+        with open(os.path.join("tests", "test_data", "steam_discussions", "2022", "{}.html".format(app_id)), 'r', encoding="utf-8") as file_handle:
+            raw_html = file_handle.read()
+        
+        # Act
+        actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Frankenstorm TD", "General")
+        actual_titles = [x["title"] for x in actual]
+
+        # Assert
+        expected_titles = [
+            "✅ Enemy Wave health debuffs stack additively or multiplicatively?",
+            "✅ Additional spawns add to total hp pool or not?"
+        ]
+
+        for i in range(len(expected_titles)):
+            expected_title = expected_titles[i]
+            self.assertIn(expected_title, actual_titles, "Didn't see %s in actual titles: %s".format(expected_title, actual_titles))
+
+
     # Discussions with an award have the date in a different place.    
-    def test_parse_discussions_gets_date_for_awarded_discussions_discussions(self):
+    def test_parse_discussions_gets_date_for_awarded_discussions(self):
         # Arrange
         raw_html = ""
         app_id = 1057990

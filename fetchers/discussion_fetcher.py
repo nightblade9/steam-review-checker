@@ -24,10 +24,12 @@ class DiscussionFetcher(SteamFetcher):
     }
     
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
+    # Relative to the above (grandparent) node ...
+    _DISCUSSION_ANSWER_XPATH = "///img[contains(@class, 'forum_topic_answer')]"
 
     # Magic numbers. Normal number of nodes is 8.
     _NUM_NODES_IF_DISCUSSION_AWARD = 9
-    _NUM_NODES_FOR_PINNED_DISCUSSIONS = 10
+    _NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS = 10
     _NUM_NODES_FOR_PINNED_AND_AWARD = 11
 
     # Metadata is a dictionary of app_id => data
@@ -80,9 +82,13 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         title_and_author = dissected_nodes[title_index].split('\n')
         title = title_and_author[0].strip()
 
-        # Pinned are ten groups. /shrug
-        if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_DISCUSSIONS:
-            title = "📌 {}".format(title)
+        # Pinned are ten groups. Same for answered questions. /shrug
+        if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS:
+            answer_nodes = node.xpath(DiscussionFetcher._DISCUSSION_ANSWER_XPATH)
+            if len(answer_nodes) > 0:
+                title = "✅ {}".format(title)
+            else:
+                title = "📌 {}".format(title)
         
         if len(title.strip()) == 0:
             raise RuntimeError("Discussion title is empty for {}".format(discussion_url))
