@@ -45,8 +45,12 @@ class Main:
     
     def _poll_data(self, refresh_minutes):
         while True:
-            self._fetch_all_data()
-            time.sleep(refresh_minutes * 60)
+            try:
+                self._fetch_all_data()
+            except:
+                print("Error fetching data")
+            finally:
+                time.sleep(refresh_minutes * 60)
     
     def _fetch_all_data(self):
         start_time = time.time()
