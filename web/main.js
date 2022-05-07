@@ -101,7 +101,10 @@ const renderHeader = (ctnr) => {
 const renderDiscussions = (ctnr) => {
   { // Container
     const template = document.querySelector("#discussion-container-template").innerHTML;
-    const data = { numDiscussions: discussions.length };
+    
+    var totalPosts = discussions.length;
+    discussions.forEach(d => { totalPosts += d.num_replies; });
+    const data = { numDiscussions: discussions.length, totalPosts: totalPosts };
     const html = applyDataToTemplate(data, template);
     ctnr.insertAdjacentHTML("beforeend", html);
   }
@@ -113,7 +116,7 @@ const renderDiscussions = (ctnr) => {
       var data = {
         game: metadata[_.app_id].game_name,
         time: getTime(_.days_ago),
-        numReplies: _.num_replies,
+        numReplies: _.num_replies + 1, // +1 to add the thread itself, don't want to see a post with "(0 posts)"
         title: _.title,
         url: _.url,
         appId: _.appId,
