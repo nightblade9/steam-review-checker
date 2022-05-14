@@ -23,6 +23,11 @@ class DiscussionFetcher(SteamFetcher):
         "Announcements": SteamFetcher._STEAM_COMMUNITY_URL + "/eventcomments",
     }
     
+    _SUBFORUMS_ROOT_PAGE = SteamFetcher._STEAM_COMMUNITY_URL + "/discussions/"
+    _SUBFORUMS_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_list')]"
+    _SUBFORUM_TITLE_NODE_XPATH = "//div[contains(@class, 'rightbox_list_option selected')]//a"
+    _SUBFORUMS_URLS_XPATH = _SUBFORUMS_NODE_ROOT_XPATH + "//a"
+
     _DISCUSSION_NODE_ROOT_XPATH = "//div[contains(@class, 'forum_topic ')]"
     # Relative to the above (grandparent) node ...
     _DISCUSSION_ANSWER_XPATH = "///img[contains(@class, 'forum_topic_answer')]"
@@ -36,25 +41,47 @@ class DiscussionFetcher(SteamFetcher):
     def get_discussions(self, metadata):
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
+
         all_discussions = []
 
         for app_id in app_ids:
-            for subforum_type in DiscussionFetcher._STEAM_DISCUSSIONS_URLS:
-                subforum_url = DiscussionFetcher._STEAM_DISCUSSIONS_URLS[subforum_type]
-                url = subforum_url.format(app_id)
+            all_subforum_urls = _get_subforum_urls(app_id)
+            for subforum_url in all_subforum_urls:
                 game_name = metadata[app_id]["game_name"]
-                response = urllib.request.urlopen(url).read()
+                response = urllib.request.urlopen(subforum_url).read()
                 raw_html = response.decode('utf-8')
-                discussions = _parse_discussions(raw_html, app_id, game_name, subforum_type)
+                subforum_name = _get_subforum_title(raw_html)
+
+                discussions = _parse_discussions(raw_html, app_id, game_name, subforum_name)
                 
                 for discussion in discussions:
                     all_discussions.append(discussion)
                 
-                print("Fetched {} discussions for {}'s {} subforum".format(len(discussions), game_name, subforum_type))
+            print("Fetched {} discussions for {} across {} subforums".format(len(all_discussions), game_name, len(all_subforum_urls)))
 
         # Sort by time descending, order of games isn't important
         all_discussions.sort(key=lambda x: x["date"], reverse=True)
         return all_discussions
+
+def _get_subforum_title(raw_html:str):
+    root = lxml.html.fromstring(raw_html)
+    nodes = root.xpath(DiscussionFetcher._SUBFORUM_TITLE_NODE_XPATH)
+    name = nodes[0].text
+    return name.strip()
+
+def _get_subforum_urls(app_id:str):
+    url = DiscussionFetcher._SUBFORUMS_ROOT_PAGE.format(app_id)
+    response = urllib.request.urlopen(url).read()
+    raw_html = response.decode('utf-8')
+    
+    root = lxml.html.fromstring(raw_html)
+    subforum_nodes = root.xpath(DiscussionFetcher._SUBFORUMS_URLS_XPATH)
+
+    urls = []
+    for node in subforum_nodes:
+        urls.append(node.attrib["href"])
+
+    return urls
 
 def _parse_discussions(raw_html, app_id, game_name, subforum_type):
     discussions = []
