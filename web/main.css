@@ -9,7 +9,13 @@ body {
 }
 
 p {
-  margin: 0;
+  margin: 16px 0;
+}
+
+button {
+  background: #2f2f2f;
+  padding: 4px 8px;
+  cursor: pointer;
 }
 
 .header, .data-container, .full-width-container {
@@ -35,6 +41,13 @@ p {
 #review-container > :nth-child(even) {
   background: #171717;
 }
+
+#header-container p,
+#discussion-container p,
+#review-container p {
+  margin: 0;
+}
+
 
 #header-container {
   margin-bottom: 12px;
@@ -66,4 +79,8 @@ p {
 
 .underline {
   text-decoration: underline;
+}
+
+.hidden {
+  display: none;
 }
