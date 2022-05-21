@@ -1,17 +1,17 @@
 * {
   box-sizing: border-box;
-  color: white;
+  color: #d4d4d4;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  background: black;
+  background: #1e1e1e;
 }
 
 .header, .data-container, .full-width-container {
   text-align: center;
-  background: black;
-  border: 10px solid #224;
+  background: #1e1e1e;
+  border: 10px solid #254682;
   max-width: 100%;
 }
 
@@ -40,7 +40,7 @@ body {
 }
 
 .review-score-negative {
-  color: red;
+  color: #c84338;
 }
 
 .underline {
