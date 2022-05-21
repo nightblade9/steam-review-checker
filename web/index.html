@@ -14,14 +14,16 @@
     <template id="header-container-template">
       <div class="full-width-container">
         <h1>Games Summary</h1>
-        <div id="header-container">
-          <ul></ul>
-        </div>
+        <ul id="header-container">
+        </ul>
+        <p>
+          <button id="clear-all-button" onclick="markAllAsRead(event);">Mark all ⭐ as read</button>
+        </p>
       </div>
     </template>
 
     <template id="header-template">
-        <li><strong>{gameName}</strong>: {reviews} reviews, {discussions} discussions</li>
+        <li class="header-item"><strong>{gameName}</strong>: {reviews} reviews, {discussions} discussions</li>
     </template>
 
     <template id="discussion-container-template">
@@ -34,7 +36,11 @@
 
     <template id="discussion-template">
       <li class="discussion">
-        <p><a href="{url}">{title}</a> ({numReplies} posts) - updated <strong>{time}</strong> ago - {game},  {subforum} forum</p>
+        <p>
+          <span class="unread-star" data-key="{url}">⭐</span>
+          <a onclick="markDiscussionAsRead(event);" href="{url}">{title}</a>
+          ({numReplies} posts) - updated <strong>{time}</strong> ago - {game},  {subforum} forum
+        </p>
       </li>
     </template>
 
@@ -49,7 +55,9 @@
     <template id="review-template">
       <div class="review">
         <p>
-          <a href="{url}"><span class="review-score review-score-{posOrNeg}">{posOrNeg}</span> review</a> for {game} as of <strong>{time}</strong> ago:</span>
+          <span class="unread-star" data-key="{recommendationid}">⭐</span>
+          <a onclick="markReviewAsRead(event);" href="{url}"><span class="review-score review-score-{posOrNeg}">{posOrNeg}</span> review</a>
+          for {game} as of <strong>{time}</strong> ago:</span>
         </p>
         <p>{reviewContent}</p>
       </div>
