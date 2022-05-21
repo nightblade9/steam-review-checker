@@ -8,6 +8,10 @@ body {
   background: #1e1e1e;
 }
 
+p {
+  margin: 0;
+}
+
 .header, .data-container, .full-width-container {
   text-align: center;
   background: #1e1e1e;
@@ -17,18 +21,35 @@ body {
 
 .data-container {
   float: left;
-  padding: 12px;
   width: 50%;
+}
+
+#header-container, #discussion-container {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+#header-container > :nth-child(even),
+#discussion-container > :nth-child(even),
+#review-container > :nth-child(even) {
+  background: #171717;
+}
+
+#header-container {
+  margin-bottom: 12px;
 }
 
 #discussions-container {
   max-width: 750px;
 }
 
-.review {
-  border: 3px double #ccc;
-  margin: 8px 0px;
-  padding: 8px;
+.header-item {
+  padding: 4px;
+}
+
+.discussion, .review {
+  padding: 16px 20px;
 }
 
 .review-score {
