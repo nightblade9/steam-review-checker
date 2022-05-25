@@ -41,8 +41,6 @@ class ReviewFetcher(SteamFetcher):
                 game_reviews.extend(data["reviews"])
                 cursor = urllib.parse.quote_plus(data["cursor"])
             
-            print("Fetched {} reviews for {}".format(len(game_reviews), game_name))
-        
             game_reviews = _process_reviews(game_reviews, app_id, game_name)
             all_reviews.extend(game_reviews)
         
@@ -58,7 +56,7 @@ def _get_steam_reviews(app_id, cursor):
     json_response = json.loads(response.decode('utf-8'))
 
     if json_response["success"] != 1:
-        print("Error: failed to fetch API for app {}; response was: success={})".format(app_id, json_response["success"]))
+        print("Error: failed to fetch Steam reviews via API for app {}; response was: success={})".format(app_id, json_response["success"]))
     
     return {"reviews": json_response["reviews"], "cursor": json_response["cursor"]}
 
