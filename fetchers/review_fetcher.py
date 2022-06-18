@@ -43,6 +43,7 @@ class ReviewFetcher(SteamFetcher):
             
             game_reviews = _process_reviews(game_reviews, app_id, game_name)
             all_reviews.extend(game_reviews)
+            print('.', end='', flush=True) # progress
         
         # Sort by time descending, order of games isn't important
         all_reviews.sort(key=lambda x: x["timestamp_created"], reverse=True)

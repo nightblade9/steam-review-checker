@@ -56,7 +56,8 @@ class DiscussionFetcher(SteamFetcher):
                 
                 for discussion in discussions:
                     all_discussions.append(discussion)
-                
+            print('.', end='', flush=True) # progress
+
         # Sort by time descending, order of games isn't important
         all_discussions.sort(key=lambda x: x["date"], reverse=True)
         return all_discussions

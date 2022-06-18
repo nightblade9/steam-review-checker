@@ -16,6 +16,7 @@ class GameFetcher(SteamFetcher):
                 "game_name": game_name
             }
 
+        print('.', end='', flush=True) # progress
         return all_data
 
     def _get_steam_game_title(self, app_id):
