@@ -13,6 +13,8 @@ import time
 REFRESH_INTERVAL_CONFIG_KEY = "refreshDataIntervalMinutes"
 REFRESH_INTERVAL_DEFAULT_MINUTES = 60
 
+ENABLE_PAGING_CONFIG_KEY = "enablePaging"
+
 PORT = 8000
 WEB_DIR = os.path.join(os.path.dirname(__file__), "web")
 WEB_DATA_DIR = os.path.join(WEB_DIR, "data")
@@ -27,13 +29,19 @@ class Main:
         self._ensure_output_directory_exists()
 
         config = SteamFetcher()._read_config_json()
-        refresh_minutes = REFRESH_INTERVAL_DEFAULT_MINUTES
 
+        refresh_minutes = REFRESH_INTERVAL_DEFAULT_MINUTES
         if REFRESH_INTERVAL_CONFIG_KEY in config:
             refresh_minutes = int(config[REFRESH_INTERVAL_CONFIG_KEY])
+        
+        enable_paging = True
+        if ENABLE_PAGING_CONFIG_KEY in config:
+            enable_paging = bool(config[ENABLE_PAGING_CONFIG_KEY])
+            if not enable_paging:
+                print("Paging of results is disabled; you will only see 50 discussions (per forum) and 100 reviews per game.")
 
         # Thread is never joined because you have to terminate the Python process
-        data_thread = Thread(target=self._poll_data, args=(refresh_minutes,))
+        data_thread = Thread(target=self._poll_data, args=(refresh_minutes, enable_paging, ))
         data_thread.start()
 
         self._wait_for_data()
@@ -43,16 +51,16 @@ class Main:
             print("Web server running on http://localhost:{}. Data is refreshed every {} minutes.".format(PORT, refresh_minutes))
             httpd.serve_forever()
     
-    def _poll_data(self, refresh_minutes):
+    def _poll_data(self, refresh_minutes, enable_paging):
         while True:
             try:
-                self._fetch_all_data()
+                self._fetch_all_data(enable_paging)
             except:
                 print("Error fetching data")
             finally:
                 time.sleep(refresh_minutes * 60)
     
-    def _fetch_all_data(self):
+    def _fetch_all_data(self, enable_paging):
         start_time = time.time()
 
         metadata = GameFetcher().get_game_metadata() # metadata like titles
@@ -61,12 +69,12 @@ class Main:
         with open(os.path.join(WEB_DATA_DIR, "metadata.json"), "w") as file_handle:
             file_handle.write(all_metadata_json)
 
-        all_reviews = ReviewFetcher().get_reviews(metadata)
+        all_reviews = ReviewFetcher().get_reviews(metadata, enable_paging)
         all_reviews_json = json.dumps(all_reviews)
         with open(os.path.join(WEB_DATA_DIR, "reviews.json"), "w") as file_handle:
             file_handle.write(all_reviews_json)
 
-        all_discussions = DiscussionFetcher().get_discussions(metadata)
+        all_discussions = DiscussionFetcher().get_discussions(metadata, enable_paging)
         all_discussions_json = json.dumps(all_discussions)
         with open(os.path.join(WEB_DATA_DIR, "discussions.json"), "w") as file_handle:
             file_handle.write(all_discussions_json)

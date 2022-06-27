@@ -38,7 +38,7 @@ class DiscussionFetcher(SteamFetcher):
     _NUM_NODES_FOR_PINNED_AND_AWARD = 11
 
     # Metadata is a dictionary of app_id => data
-    def get_discussions(self, metadata):
+    def get_discussions(self, metadata, enable_paging):
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
 
@@ -53,6 +53,8 @@ class DiscussionFetcher(SteamFetcher):
                 subforum_name = _get_subforum_title(raw_html)
 
                 discussions = _parse_discussions(raw_html, app_id, game_name, subforum_name)
+                # TODO: are there exatly 50 discussions? If so, there are likely more pages to parse.
+                # enable_paging isn't used yet, but if you implement pagination, do it conditionally.
                 
                 for discussion in discussions:
                     all_discussions.append(discussion)
@@ -73,6 +75,7 @@ def _get_subforum_urls(app_id:str):
     raw_html = response.decode('utf-8')
     
     root = lxml.html.fromstring(raw_html)
+    # Very flaky xpath for finding all subforum URLs
     subforum_nodes = root.xpath(DiscussionFetcher._SUBFORUMS_URLS_XPATH)
 
     urls = []

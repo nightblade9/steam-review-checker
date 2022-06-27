@@ -18,7 +18,7 @@ class ReviewFetcher(SteamFetcher):
     _STEAM_REVIEW_PERMALINK = "https://steamcommunity.com/profiles/{}/recommended/{}"
 
     # Metadata is a dictionary of app_id => data
-    def get_reviews(self, metadata):
+    def get_reviews(self, metadata, enable_paging):
         config_json = self._read_config_json()
         app_ids = config_json["appIds"]
         all_reviews = []
@@ -36,7 +36,7 @@ class ReviewFetcher(SteamFetcher):
             cursor = urllib.parse.quote_plus(data["cursor"])
 
             # More than one page of reviews!
-            while len(data["reviews"]) == 100:
+            while len(data["reviews"]) == 100 and enable_paging:
                 data = _get_steam_reviews(app_id, cursor)
                 game_reviews.extend(data["reviews"])
                 cursor = urllib.parse.quote_plus(data["cursor"])

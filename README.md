@@ -26,6 +26,10 @@ First, create a new `config.json` file in the repository root directory, and put
 }
 ```
 
+# Customizations
+
+## Update Frequency
+
 By default, the app refreshes data every 60 minutes. You can change this interval by adding an additional key/value pair to the config file. The following example changes it to refresh every minute:
 
 ```json
@@ -38,6 +42,16 @@ Build the Python application:
 - Run `python main.py` to run the web application.
 
 It builds, runs, fetches game data, and starts the web-server. You can open a browser to `localhost:8000` to see the dashboard.
+
+## Paging
+
+By default, the app tries to get *all* pages of data: all pages across all forums, and all API calls necessary to grab all discussions. If you have a game with lots of reiews or discussions, congratulations! Since you check on a regular basis (and only care about seeing new things), you can disable paging to improve performance.
+
+```json
+    "enablePaging": false
+```
+
+If you would like more granular paging (reviews vs. discussions), open up an issue and let me know.
 
 # Development Environment
 
