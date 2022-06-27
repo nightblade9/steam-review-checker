@@ -84,7 +84,7 @@ class Main:
 
         num_posts = len(all_discussions) + sum([d["num_replies"] for d in all_discussions])
         
-        print(f"Fetched {len(all_discussions)} threads with {num_posts} posts, and {len(all_reviews)} reviews")
+        print(f"\nFetched {len(all_discussions)} threads with {num_posts} posts, and {len(all_reviews)} reviews")
         print("{0} | Fetched data in {1:g}s".format(datetime.datetime.now(), elapsed_time))
     
     def _wait_for_data(self):
