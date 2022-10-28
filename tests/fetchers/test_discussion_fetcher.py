@@ -71,7 +71,7 @@ class TestDicussionFetcher(unittest.TestCase):
         raw_html = ""
         app_id = 1342600
         
-        with open(os.path.join("tests", "test_data", "steam_discussions", "2021", "{}.html".format(app_id)), 'r', encoding="utf-8") as file_handle:
+        with open(os.path.join("tests", "test_data", "steam_discussions", "2022", "{}.html".format(app_id)), 'r', encoding="utf-8") as file_handle:
             raw_html = file_handle.read()
         
         expected_discussions = 3

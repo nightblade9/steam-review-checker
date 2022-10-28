@@ -114,9 +114,15 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         author = ""
 
         if len(title) == 0:
+            title_index = 0
             # 8 is a special case for Gem Worlds pinned announcement in subforum circa 2022, it failed parsing.
-            title_index = 8 if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS else 10
-            title = f"📌 {dissected_nodes[title_index].strip()}"
+            if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS:
+                title_index = 8
+                title = dissected_nodes[title_index].strip()
+            else:
+                title_index = 10
+                title = f"📌 {dissected_nodes[title_index].strip()}"
+
             author = dissected_nodes[title_index + 1].strip()
         else:    
             # Pinned are ten groups. Same for answered questions. /shrug
