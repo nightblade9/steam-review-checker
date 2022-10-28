@@ -110,19 +110,27 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         title_index = num_dissected_nodes - 1
         title_and_author = dissected_nodes[title_index].split('\n')
         title = title_and_author[0].strip()
+        author = ""
 
+        if len(title) == 0:
+            # Special case for Gem Worlds pinned announcement in subforum circa 2022, it failed parsing.
+            title_index = 10
+            title = f"📌 {dissected_nodes[title_index].strip()}"
+            author = dissected_nodes[title_index + 1].strip()
+            
         # Pinned are ten groups. Same for answered questions. /shrug
         if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS:
             answer_nodes = node.xpath(DiscussionFetcher._DISCUSSION_ANSWER_XPATH)
             if len(answer_nodes) > 0:
-                title = "✅ {}".format(title)
+                title = f"✅ {title}"
             else:
-                title = "📌 {}".format(title)
+                title = f"📌 {title}"
         
         if len(title.strip()) == 0:
-            raise RuntimeError("Discussion title is empty for {}".format(discussion_url))
+            raise RuntimeError(f"Discussion title is empty for {discussion_url}")
 
-        author = title_and_author[-1].strip()
+        if author == "":
+            author = title_and_author[-1].strip()
         
         # Discussions with a shiny award, have an extra node (Viking Trickshot)
         # Discussions that are pinned AND have a shiny award, have extra nodes (Biomutant)

@@ -116,6 +116,32 @@ class TestDicussionFetcher(unittest.TestCase):
                 actual_discussion = actual[i]
                 self.assertEqual(expected_title, actual_discussion["title"])
 
+    def test_parse_discussions_can_parse_pinned_broken_html(self):
+        # October 2022: discussion parsing started failing for a pinned post in a subforum
+        # Arrange
+        raw_html = ""
+        app_id = 1858760
+        
+        with open(os.path.join("tests", "test_data", "steam_discussions", "2022", "{}.html".format(app_id)), 'r', encoding="utf-8") as file_handle:
+            raw_html = file_handle.read()
+        
+        # Act
+        actual = discussion_fetcher._parse_discussions(raw_html, app_id, "Gem Worlds", "General Discussions")
+        actual_titles = [x["title"] for x in actual]
+
+        # Assert
+        expected_titles = [
+            "📌 Post demo feedback in the Demo Feedback sub-group!",
+            "📌 We're on Discord!"
+        ]
+
+        self.assertEqual(len(expected_titles), len(actual))
+
+        for i in range(len(expected_titles)):
+            expected_title = expected_titles[i]
+            actual_discussion = actual[i]
+            self.assertEqual(expected_title, actual_discussion["title"])
+
     # Make sure we get "✅ <title>" discussions answered, via Frankenstorm TD
     def test_parse_discussions_gets_emoji_title_for_answered_discussions(self):
         # Arrange
