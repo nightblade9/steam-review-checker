@@ -33,7 +33,8 @@ class DiscussionFetcher(SteamFetcher):
     _DISCUSSION_ANSWER_XPATH = "///img[contains(@class, 'forum_topic_answer')]"
 
     # Magic numbers. Normal number of nodes is 8.
-    _NUM_NODES_IF_DISCUSSION_AWARD = 9
+    _NUM_NODES_FOR_NORMAL = 8
+    _NUM_NODES_FOR_DISCUSSION_AWARD = 9
     _NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS = 10
     _NUM_NODES_FOR_PINNED_AND_AWARD = 11
 
@@ -113,30 +114,29 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         author = ""
 
         if len(title) == 0:
-            # Special case for Gem Worlds pinned announcement in subforum circa 2022, it failed parsing.
-            title_index = 10
+            # 8 is a special case for Gem Worlds pinned announcement in subforum circa 2022, it failed parsing.
+            title_index = 8 if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS else 10
             title = f"📌 {dissected_nodes[title_index].strip()}"
             author = dissected_nodes[title_index + 1].strip()
-            
-        # Pinned are ten groups. Same for answered questions. /shrug
-        if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS:
-            answer_nodes = node.xpath(DiscussionFetcher._DISCUSSION_ANSWER_XPATH)
-            if len(answer_nodes) > 0:
-                title = f"✅ {title}"
-            else:
-                title = f"📌 {title}"
+        else:    
+            # Pinned are ten groups. Same for answered questions. /shrug
+            if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS:
+                answer_nodes = node.xpath(DiscussionFetcher._DISCUSSION_ANSWER_XPATH)
+                if len(answer_nodes) > 0:
+                    title = f"✅ {title}"
+                else:
+                    title = f"📌 {title}"
         
         if len(title.strip()) == 0:
             raise RuntimeError(f"Discussion title is empty for {discussion_url}")
 
-        if author == "":
-            author = title_and_author[-1].strip()
+        author = title_and_author[-1].strip()
         
         # Discussions with a shiny award, have an extra node (Viking Trickshot)
         # Discussions that are pinned AND have a shiny award, have extra nodes (Biomutant)
         # In both cases, look for the date a node past its usual spot.
         date_index = 2
-        if num_dissected_nodes == DiscussionFetcher._NUM_NODES_IF_DISCUSSION_AWARD or num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_AND_AWARD:
+        if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_DISCUSSION_AWARD or num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_AND_AWARD:
             date_index = 3
         raw_date = dissected_nodes[date_index].strip()
 

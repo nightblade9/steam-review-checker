@@ -9,6 +9,7 @@ import os
 import socketserver
 from threading import Thread
 import time
+import traceback
 
 REFRESH_INTERVAL_CONFIG_KEY = "refreshDataIntervalMinutes"
 REFRESH_INTERVAL_DEFAULT_MINUTES = 60
@@ -57,6 +58,7 @@ class Main:
                 self._fetch_all_data(enable_paging)
             except Exception as ex:
                 print(f"Error fetching data: {ex}")
+                traceback.print_exc()
             finally:
                 time.sleep(refresh_minutes * 60)
     
