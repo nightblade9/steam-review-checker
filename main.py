@@ -55,8 +55,8 @@ class Main:
         while True:
             try:
                 self._fetch_all_data(enable_paging)
-            except:
-                print("Error fetching data")
+            except Exception as ex:
+                print(f"Error fetching data: {ex}")
             finally:
                 time.sleep(refresh_minutes * 60)
     
