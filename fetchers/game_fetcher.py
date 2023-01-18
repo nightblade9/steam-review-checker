@@ -26,8 +26,20 @@ class GameFetcher(SteamFetcher):
 
         return _parse_title(raw_html)
     
-def _parse_title(raw_html):
-        start_position = raw_html.index("<title>") + len("<title>")
-        stop_position = raw_html.index("on Steam", start_position) - 1
-        title = raw_html[start_position:stop_position]
-        return title
+def _parse_title(raw_html:str):
+    # Starting some time around 2023, all game pages have this nifty little tag:
+    # <div id="appHubAppName" class="apphub_AppName">Gem Worlds</div>
+    # Parsing <title>...</title> doesn't make sense any more. Can delete it as a fallback, I suppose.
+
+    #start_position = raw_html.index("<title>") + len("<title>")
+    #stop_position = raw_html.index("on Steam", start_position) - 1
+    #title = raw_html[start_position:stop_position]
+    #return title
+
+    search_string = "<div id=\"appHubAppName\""
+    start_position = raw_html.index(search_string)
+    # go to the end of the tag
+    start_position = raw_html.index(">", start_position) + 1
+    stop_position = raw_html.index("</div>", start_position)
+    title = raw_html[start_position:stop_position]
+    return title
