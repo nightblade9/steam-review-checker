@@ -34,6 +34,7 @@ class DiscussionFetcher(SteamFetcher):
 
     # Magic numbers. Normal number of nodes is 8.
     _NUM_NODES_FOR_NORMAL = 8
+    _NUM_NODES_FOR_ANNOUNCEMENTS = 9
     _NUM_NODES_FOR_DISCUSSION_AWARD = 9
     _NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS = 10
     _NUM_NODES_FOR_PINNED_AND_AWARD = 11
@@ -112,6 +113,7 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         title_and_author = dissected_nodes[title_index].split('\n')
         title = title_and_author[0].strip()
         author = ""
+        raw_date = ""
 
         if len(title) == 0:
             title_index = 0
@@ -124,7 +126,7 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
                 title = f"📌 {dissected_nodes[title_index].strip()}"
 
             author = dissected_nodes[title_index + 1].strip()
-        else:    
+        else: 
             # Pinned are ten groups. Same for answered questions. /shrug
             if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_OR_ANSWERED_DISCUSSIONS:
                 answer_nodes = node.xpath(DiscussionFetcher._DISCUSSION_ANSWER_XPATH)
@@ -132,11 +134,17 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
                     title = f"✅ {title}"
                 else:
                     title = f"📌 {title}"
-        
+            elif num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_ANNOUNCEMENTS:
+                title = dissected_nodes[-1].strip()
+                raw_date = dissected_nodes[2].strip()
+                # announcements HAVE NO AUTHOR
+                title_and_author = [title, ""]
+
         if len(title.strip()) == 0:
             raise RuntimeError(f"Discussion title is empty for {discussion_url}")
 
-        author = title_and_author[-1].strip()
+        if len(author) == 0:
+            author = title_and_author[-1].strip()
         
         # Discussions with a shiny award, have an extra node (Viking Trickshot)
         # Discussions that are pinned AND have a shiny award, have extra nodes (Biomutant)
@@ -144,9 +152,10 @@ def _parse_discussions(raw_html, app_id, game_name, subforum_type):
         date_index = 2
         if num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_DISCUSSION_AWARD or num_dissected_nodes == DiscussionFetcher._NUM_NODES_FOR_PINNED_AND_AWARD:
             date_index = 3
-        raw_date = dissected_nodes[date_index].strip()
+        if len(raw_date) == 0:
+            raw_date = dissected_nodes[date_index].strip()
 
-        if len(raw_date.strip()) == 0:
+        if len(raw_date) == 0:
             raise RuntimeError("Discussion date failed to parse (empty string): i={} count={}".format(date_index, num_dissected_nodes))
 
         discussion_date = _parse_date(raw_date)
