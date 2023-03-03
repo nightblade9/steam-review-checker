@@ -132,8 +132,10 @@
         if (!(appId in reviewsPerGame)) {
           reviewsPerGame[appId] = 0;
         }
-
-        reviewsPerGame[appId]++;
+        
+        if (reviewData.counted_review == true) {
+          reviewsPerGame[appId]++;
+        }
       });
 
       // amend metadata to add number of discussions to each game
